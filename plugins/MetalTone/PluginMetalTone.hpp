@@ -101,14 +101,12 @@ protected:
     // Init
 
     void initParameter(uint32_t index, Parameter& parameter) override;
-    void initProgramName(uint32_t index, String& programName) override;
 
     // -------------------------------------------------------------------
     // Internal data
 
     float getParameterValue(uint32_t index) const override;
     void setParameterValue(uint32_t index, float value) override;
-    void loadProgram(uint32_t index) override;
 
     void setOutputParameterValue(uint32_t index, float value);
 
@@ -138,20 +136,6 @@ private:
 
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(PluginMetalTone)
 };
-
-struct Preset {
-    const char* name;
-    float params[PluginMetalTone::paramCount];
-};
-
-const Preset factoryPresets[] = {
-    {
-        "Default",  // preset name
-        {0.0f, 0.5, 0.3, 0.5, 0.5, 0.5}      // array of presetCount float param values
-    }
-};
-
-const uint presetCount = sizeof(factoryPresets) / sizeof(Preset);
 
 // -----------------------------------------------------------------------
 

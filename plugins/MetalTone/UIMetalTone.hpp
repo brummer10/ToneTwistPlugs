@@ -116,7 +116,6 @@ public:
 
 protected:
     void parameterChanged(uint32_t, float value) override;
-    void programLoaded(uint32_t index) override;
     void sampleRateChanged(double newSampleRate) override;
 
     void uiIdle() override;

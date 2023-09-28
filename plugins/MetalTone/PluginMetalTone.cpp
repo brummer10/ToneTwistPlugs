@@ -21,7 +21,7 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 
 PluginMetalTone::PluginMetalTone()
-    : Plugin(paramCount, presetCount, 0),
+    : Plugin(paramCount, 0, 0),
       dsp(metaltone_pre::plugin()),
       dspd(metaltone_dist::plugin()),
       dspp(metaltone_post::plugin())
@@ -104,16 +104,6 @@ void PluginMetalTone::initParameter(uint32_t index, Parameter& parameter) {
     }
 }
 
-/**
-  Set the name of the program @a index.
-  This function will be called once, shortly after the plugin is created.
-*/
-void PluginMetalTone::initProgramName(uint32_t index, String& programName) {
-    if (index < presetCount) {
-        programName = factoryPresets[index].name;
-    }
-}
-
 // -----------------------------------------------------------------------
 // Internal data
 
@@ -148,20 +138,6 @@ void PluginMetalTone::setOutputParameterValue(uint32_t index, float value)
     fParams[index] = value;
     //fprintf(stderr, "setOutputParameterValue %i %f\n", index,value);
 }
-/**
-  Load a program.
-  The host may call this function from any context,
-  including realtime processing.
-*/
-void PluginMetalTone::loadProgram(uint32_t index) {
-    if (index < presetCount) {
-        //fprintf(stderr, "Load Program %i\n", index);
-        for (int i=0; i < paramCount; i++) {
-            //fprintf(stderr, "setParameterValue %i %f\n", i,factoryPresets[index].params[i]);
-            setParameterValue(i, factoryPresets[index].params[i]);
-        }
-    }
-}
 
 // -----------------------------------------------------------------------
 // Process
@@ -173,8 +149,6 @@ void PluginMetalTone::activate() {
     dspd->init((uint32_t)fSampleRate);
     dspp->init((uint32_t)fSampleRate);
 }
-
-
 
 void PluginMetalTone::run(const float** inputs, float** outputs,
                               uint32_t frames) {

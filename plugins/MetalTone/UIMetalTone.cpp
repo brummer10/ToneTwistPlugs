@@ -91,20 +91,6 @@ void UIMetalTone::parameterChanged(uint32_t index, float value) {
 }
 
 /**
-  A program has been loaded on the plugin side.
-  This is called by the host to inform the UI about program changes.
-*/
-void UIMetalTone::programLoaded(uint32_t index) {
-    if (index < presetCount) {
-        for (int i=0; i < PluginMetalTone::paramCount; i++) {
-            // set values for each parameter and update their widgets
-            // fprintf(stderr, "setUIParameterValue %i %f\n", i,factoryPresets[index].params[i]);
-            parameterChanged(i, factoryPresets[index].params[i]);
-        }
-    }
-}
-
-/**
   Optional callback to inform the UI about a sample rate change on the plugin side.
 */
 void UIMetalTone::sampleRateChanged(double newSampleRate) {
