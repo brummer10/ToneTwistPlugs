@@ -379,6 +379,238 @@ private:
 
 // -----------------------------------------------------------------------
 
+class CairoLed : public CairoSubWidget
+{
+public:
+
+    explicit CairoLed(SubWidget* const parent, CairoColourTheme &theme_)
+        : CairoSubWidget(parent),
+          theme(theme_)
+          {
+            init();
+          }
+
+    explicit CairoLed(TopLevelWidget* const parent, CairoColourTheme &theme_)
+        : CairoSubWidget(parent),
+          theme(theme_)
+          {
+            init();
+          }
+
+    void setValue(float v)
+    {
+        state = (int)v;
+        repaint();
+    }
+
+protected:
+
+    void init()
+    {
+        state = 0;
+    }
+
+    void onCairoDisplay(const CairoGraphicsContext& context) override
+    {
+        cairo_t* const cr = context.handle;
+        const Size<uint> sz = getSize();
+        const int w = sz.getWidth()-2;
+        const int h = sz.getHeight()-2;
+        const int r = h < w ? h * 0.5 : w * 0.5;
+
+        cairo_push_group (cr);
+        cairo_arc(cr,w * 0.5, h * 0.5, r, 0, 2 * M_PI );
+
+        if (state) {
+            cairo_pattern_t* pat = cairo_pattern_create_radial (w * 0.5, h * 0.5,
+                                                1, w * 0.5, h * 0.5, r);
+            cairo_pattern_add_color_stop_rgba (pat, 0,  0.83, 0.1, 0.1, 1.0);
+            cairo_pattern_add_color_stop_rgba (pat, 0.6,  0.33, 0.1, 0.1, 1.0);
+            cairo_pattern_add_color_stop_rgba (pat, 1,  0.3, 0.3, 0.3, 1.0);
+            cairo_set_source (cr, pat);
+            cairo_fill_preserve(cr);
+            cairo_pattern_destroy (pat);
+        }
+        else
+        {
+            cairo_pattern_t* pat = cairo_pattern_create_radial (w * 0.5, h * 0.5,
+                                                1, w * 0.5, h * 0.5, r);
+            cairo_pattern_add_color_stop_rgba (pat, 0,  0.3, 0.1, 0.1, 1.0);
+            cairo_pattern_add_color_stop_rgba (pat, 0.7,  0.2, 0.1, 0.1, 1.0);
+            cairo_pattern_add_color_stop_rgba (pat, 1,  0.3, 0.3, 0.3, 1.0);
+            cairo_set_source (cr, pat);
+            cairo_fill_preserve(cr);
+            cairo_pattern_destroy (pat);
+        }
+
+        cairo_set_line_width(cr,2);
+        theme.setCairoColour(cr, theme.idColourBoxShadow);
+        cairo_stroke (cr);
+        cairo_new_path (cr);
+
+        cairo_pop_group_to_source (cr);
+        cairo_paint (cr);
+    }
+
+private:
+    CairoColourTheme &theme;
+    uint state;
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoLed)
+};
+
+// -----------------------------------------------------------------------
+
+class CairoSwitch : public CairoSubWidget
+{
+public:
+
+    explicit CairoSwitch(SubWidget* const parent, CairoColourTheme &theme_,
+            bool *blocked_, ScopedPointer<CairoLed>& led_, UI *ui, const char* lab, const uint32_t index)
+        : CairoSubWidget(parent),
+          theme(theme_),
+          blocked(blocked_),
+          led(led_),
+          setParameterValue([ui] (const uint32_t index, float value)
+                                {ui->setParameterValue(index, value);}),
+          label(lab),
+          port(index)
+          {
+            init();
+          }
+
+    explicit CairoSwitch(TopLevelWidget* const parent, CairoColourTheme &theme_,
+            bool *blocked_, ScopedPointer<CairoLed>& led_, UI *ui, const char* lab, const uint32_t index)
+        : CairoSubWidget(parent),
+          theme(theme_),
+          blocked(blocked_),
+          led(led_),
+          setParameterValue([ui] (const uint32_t index, float value)
+                                {ui->setParameterValue(index, value);}),
+          label(lab),
+          port(index)
+          {
+            init();
+          }
+
+    void setValue(float v)
+    {
+        value = v;
+        repaint();
+    }
+
+protected:
+
+    void init()
+    {
+        value = 0.0f;
+        state = 0;
+        prelight = false;
+    }
+
+    void onCairoDisplay(const CairoGraphicsContext& context) override
+    {
+        cairo_t* const cr = context.handle;
+        const Size<uint> sz = getSize();
+        const int w = sz.getWidth();
+        const int h = sz.getHeight();
+
+        cairo_push_group (cr);
+
+        theme.setCairoColour(cr, theme.idColourBackgroundNormal, true);
+        cairo_paint(cr);
+
+        if (prelight) {
+            theme.setCairoColour(cr, theme.idColourBackgroundPrelight);
+            cairo_paint(cr);
+        }
+
+        if (state) {
+            cairo_rectangle(cr, 1, 1, w -2, h -2);
+            cairo_set_line_width(cr,2);
+            theme.setCairoColour(cr, theme.idColourBackgroundNormal);
+            cairo_stroke(cr);
+            cairo_set_line_width(cr,1);
+            cairo_move_to(cr, 1,h);
+            cairo_line_to(cr, 1, 1);
+            cairo_line_to(cr, w-2, 1);
+            theme.setCairoColour(cr, theme.idColourBoxShadow);
+            cairo_stroke(cr);
+        }
+        else
+            theme.boxShadow(cr, w, h, 5, 5);
+
+        int offset = 0;
+        cairo_text_extents_t extents;
+        if(state==1) {
+            offset = 2;
+        }
+        theme.setCairoColour(cr, theme.idColourForgroundNormal);
+        cairo_set_font_size (cr, h/4.2);
+        cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
+                                   CAIRO_FONT_WEIGHT_BOLD);
+        cairo_text_extents(cr, label , &extents);
+
+        cairo_move_to (cr, (w-extents.width)*0.5 +offset, (h+extents.height)*0.75 +offset);
+        cairo_show_text(cr, label);
+
+        cairo_pop_group_to_source (cr);
+        cairo_paint (cr);
+    }
+
+    bool onMouse(const MouseEvent& event) override
+    {
+        if (event.press && (event.button == 1)  && contains(event.pos)) // mouse button is pressed
+        {
+            value = value ? 0.0f : 1.0f;
+            state = 1;
+            led->setValue(value);
+            setParameterValue(port, value);
+            repaint();
+        }
+        else if (state)
+        {
+            state = 0;
+            repaint();
+        }
+
+        return CairoSubWidget::onMouse(event);
+    }
+
+    bool onMotion(const MotionEvent& event) override
+    {
+        if (contains(event.pos)) // enter
+        {
+            if (!prelight && !(*blocked)) {
+                prelight = true;
+                (*blocked) = true;
+                repaint();
+            }
+        }
+        else if (prelight) // leave
+        {
+            prelight = false;
+            (*blocked) = false;
+            repaint();
+        }
+
+        return CairoSubWidget::onMotion(event);
+    }
+
+private:
+    CairoColourTheme &theme;
+    bool *blocked;
+    ScopedPointer<CairoLed>& led;
+    std::function<void(const uint32_t, float) > setParameterValue;
+    float value;
+    uint state;
+    bool prelight;
+    const char* label;
+    const uint32_t port;
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoSwitch)
+};
+
+// -----------------------------------------------------------------------
+
 class CairoKnob : public CairoSubWidget
 {
 public:

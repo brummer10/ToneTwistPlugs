@@ -22,6 +22,11 @@ START_NAMESPACE_DISTRHO
 
 PluginMetalTone::PluginMetalTone()
     : Plugin(paramCount, 0, 0),
+      srChanged(false),
+      needs_ramp_down(false),
+      needs_ramp_up(false),
+      bypassed(false),
+      bypass_(2),
       dsp(metaltone_pre::plugin()),
       dspd(metaltone_dist::plugin()),
       dspp(metaltone_post::plugin())
@@ -101,6 +106,16 @@ void PluginMetalTone::initParameter(uint32_t index, Parameter& parameter) {
             parameter.ranges.def = 0.5f;
             parameter.hints = kParameterIsAutomatable;
             break;
+        case BYPASS:
+            parameter.name = "Bypass";
+            parameter.shortName = "Bypass";
+            parameter.symbol = "BYPASS";
+            parameter.ranges.min = 0.0f;
+            parameter.ranges.max = 1.0f;
+            parameter.ranges.def = 1.0f;
+            parameter.designation = kParameterDesignationBypass;
+            parameter.hints = kParameterIsAutomatable|kParameterIsBoolean;
+            break;
     }
 }
 
@@ -112,6 +127,9 @@ void PluginMetalTone::initParameter(uint32_t index, Parameter& parameter) {
 */
 void PluginMetalTone::sampleRateChanged(double newSampleRate) {
     fSampleRate = newSampleRate;
+    srChanged = true;
+    activate();
+    srChanged = false;
 }
 
 /**
@@ -145,6 +163,10 @@ void PluginMetalTone::setOutputParameterValue(uint32_t index, float value)
 void PluginMetalTone::activate() {
     // plugin is activated
     fSampleRate = getSampleRate();
+    ramp_down_step = 32 * (256 * fSampleRate) / 48000; 
+    ramp_up_step = ramp_down_step;
+    ramp_down = ramp_down_step;
+    ramp_up = 0.0;
     dsp->init((uint32_t)fSampleRate);
     dspd->init((uint32_t)fSampleRate);
     dspp->init((uint32_t)fSampleRate);
@@ -153,6 +175,7 @@ void PluginMetalTone::activate() {
 void PluginMetalTone::run(const float** inputs, float** outputs,
                               uint32_t frames) {
 
+    if (srChanged) return;
     // get the left and right audio inputs
     const float* const inpL = inputs[0];
    // const float* const inpR = inputs[1];
@@ -165,9 +188,64 @@ void PluginMetalTone::run(const float** inputs, float** outputs,
     if(outL != inpL)
         memcpy(outL, inpL, frames*sizeof(float));
 
-    dsp->compute(frames, outL, outL);
-    dspd->compute(frames, outL, outL);
-    dspp->compute(frames, outL, outL);
+    float buf0[frames];
+    // check if bypass is pressed
+    if (bypass_ != static_cast<uint32_t>(fParams[BYPASS])) {
+        bypass_ = static_cast<uint32_t>(fParams[BYPASS]);
+        if (!bypass_) {
+            needs_ramp_down = true;
+            needs_ramp_up = false;
+        } else {
+            needs_ramp_down = false;
+            needs_ramp_up = true;
+            bypassed = false;
+        }
+    }
+
+    if (needs_ramp_down || needs_ramp_up) {
+         memcpy(buf0, inpL, frames*sizeof(float));
+    }
+    if (!bypassed) {
+        dsp->compute(frames, outL, outL);
+        dspd->compute(frames, outL, outL);
+        dspp->compute(frames, outL, outL);
+    }
+    // check if ramping is needed
+    if (needs_ramp_down) {
+        float fade = 0;
+        for (uint32_t i=0; i<frames; i++) {
+            if (ramp_down >= 0.0) {
+                --ramp_down; 
+            }
+            fade = MAX(0.0,ramp_down) /ramp_down_step ;
+            outL[i] = outL[i] * fade + buf0[i] * (1.0 - fade);
+        }
+        if (ramp_down <= 0.0) {
+            // when ramped down, clear buffer from dsp
+            needs_ramp_down = false;
+            bypassed = true;
+            ramp_down = ramp_down_step;
+            ramp_up = 0.0;
+        } else {
+            ramp_up = ramp_down;
+        }
+    } else if (needs_ramp_up) {
+        float fade = 0;
+        for (uint32_t i=0; i<frames; i++) {
+            if (ramp_up < ramp_up_step) {
+                ++ramp_up ;
+            }
+            fade = MIN(ramp_up_step,ramp_up) /ramp_up_step ;
+            outL[i] = outL[i] * fade + buf0[i] * (1.0 - fade);
+        }
+        if (ramp_up >= ramp_up_step) {
+            needs_ramp_up = false;
+            ramp_up = 0.0;
+            ramp_down = ramp_down_step;
+        } else {
+            ramp_down = ramp_up;
+        }
+    }
 }
 
 // -----------------------------------------------------------------------

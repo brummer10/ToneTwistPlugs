@@ -29,6 +29,7 @@ void SimpleResampler::setup(int sampleRate, unsigned int fact)
 	m_fact = fact;
 	const int qual = 16; // resulting in a total delay of 2*qual (0.7ms @44100)
 	// upsampler
+    r_up.clear();
 	r_up.setup(sampleRate, sampleRate*fact, 1, qual);
 	// k == inpsize() == 2 * qual
 	// pre-fill with k-1 zeros
@@ -37,6 +38,7 @@ void SimpleResampler::setup(int sampleRate, unsigned int fact)
 	r_up.inp_data = r_up.out_data = 0;
 	r_up.process();
 	// downsampler
+    r_down.clear();
 	r_down.setup(sampleRate*fact, sampleRate, 1, qual);
 	// k == inpsize() == 2 * qual * fact
 	// pre-fill with k-1 zeros

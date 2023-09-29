@@ -52,6 +52,13 @@ UIMetalTone::UIMetalTone()
     middleKnob->setAdjustment(0.5, 0.0, 1.0, 0.01);
     sizeGroup->addToSizeGroup(middleKnob, 145, 120, 60, 80);
 
+    bypassLed = new CairoLed(this, theme);
+    sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
+
+    bypassSwitch = new CairoSwitch(this, theme, &blocked, bypassLed,
+                dynamic_cast<UI*>(this), "MetalTone", PluginMetalTone::BYPASS);
+    sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
+
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
@@ -87,7 +94,11 @@ void UIMetalTone::parameterChanged(uint32_t index, float value) {
         case PluginMetalTone::MIDDLE:
             middleKnob->setValue(value);
             break;
-    }
+         case PluginMetalTone::BYPASS:
+            bypassSwitch->setValue(value);
+            bypassLed->setValue(value);
+            break;
+   }
 }
 
 /**
@@ -126,31 +137,12 @@ void UIMetalTone::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_t* const cr = context.handle;
     int width = getWidth();
     int height = getHeight();
-    //float scale = sizeGroup->getScaleFactor();
-    float scaleH = sizeGroup->getScaleHFactor();
-    float scaleW = sizeGroup->getScaleWFactor();
 
     cairo_push_group (cr);
+
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
     theme.boxShadow(cr, width, height, 25, 25);
-
-    cairo_rectangle(cr,30 * scaleW, 220 * scaleH,
-                    225 * scaleW, 150 * scaleH);
-    theme.setCairoColour(cr, theme.idColourBackground, true);
-    cairo_fill (cr);
-
-    cairo_select_font_face(cr, "Serif", CAIRO_FONT_SLANT_NORMAL,
-      CAIRO_FONT_WEIGHT_BOLD);
-    cairo_set_font_size(cr, 36 * scaleW);
-
-    theme.setCairoColour(cr, theme.idColourBoxShadow);
-    cairo_move_to(cr, 43 * scaleW, 343 * scaleH);
-    cairo_show_text(cr, "MetalTone");
-
-    theme.setCairoColour(cr, theme.idColourForgroundNormal);
-    cairo_move_to(cr, 40 * scaleW,  340 * scaleH);
-    cairo_show_text(cr, "MetalTone");
 
     cairo_pop_group_to_source (cr);
     cairo_paint (cr);
