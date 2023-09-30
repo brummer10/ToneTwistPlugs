@@ -70,21 +70,21 @@ protected:
     }
 
     const char* getDescription() const override {
-        return "MetalTone is modeled after the renowned BOSS MT-2 Metal Zone(*), a high gain distortion pedal with an advanced EQ section. "
+        return R"(MetalTone is modeled after the renowned BOSS MT-2 Metal Zone(*), a high gain distortion pedal with an advanced EQ section. 
 
-        "It has standard active EQ controls with a massive 15dB of cut/boost range for the lows and highs. "
-        "It also sports a parametric active EQ for the mids with two controls: the frequency, and the boost/cut amount. "
+It has standard active EQ controls with a massive 15dB of cut/boost range for the lows and highs. 
+It also sports a parametric active EQ for the mids with two controls: the frequency, and the boost/cut amount. 
 
-        "The midfreq parameter has a very wide range, going from 200Hz all the way to 5kHz. As a result, it's better to think of it simply as a single highly flexible active EQ, "
-        "and disregard the idea that it's only for shaping the mids. "
+The midfreq parameter has a very wide range, going from 200Hz all the way to 5kHz. As a result, it's better to think of it simply as a single highly flexible active EQ, 
+and disregard the idea that it's only for shaping the mids. 
 
-        "Features: "
-        "Modeled by Brummer "
-        "Based on the BOSS MT-2 Metal Zone(*) "
+Features: 
+Modeled by Brummer 
+Based on the BOSS MT-2 Metal Zone(*) 
 
-        "(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with this software. "
-        "BOSS MT-2 Metal Zone is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this "
-        "product. All other trademarks are the property of their respective holders.'" ;
+(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with this software. 
+BOSS MT-2 Metal Zone is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this 
+product. All other trademarks are the property of their respective holders.')" ;
     }
 
     const char* getMaker() const noexcept override {

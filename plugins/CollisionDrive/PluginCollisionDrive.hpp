@@ -59,21 +59,24 @@ protected:
     }
 
     const char* getDescription() const override {
-        return "CollisionDrive is modeled after the renowned BOSS MT-2 Metal Zone(*), a high gain distortion pedal with an advanced EQ section. "
+        return R"(CollisionDrive is modeled after the Horizon Devices Precision Drive(*), a modern overdrive pedal with a built-in noise gate.
 
-        "It has standard active EQ controls with a massive 15dB of cut/boost range for the lows and highs. "
-        "It also sports a parametric active EQ for the mids with two controls: the frequency, and the boost/cut amount. "
+Besides the usual Volume and Drive controls, the CollisionDrive features Attack and Bright controls.
 
-        "The midfreq parameter has a very wide range, going from 200Hz all the way to 5kHz. As a result, it's better to think of it simply as a single highly flexible active EQ, "
-        "and disregard the idea that it's only for shaping the mids. "
+The Attack control manipulates the response of the pedal, turning it down simultaneously softens the overdrive attack and increases the sustain.
 
-        "Features: "
-        "Modeled by Brummer "
-        "Based on the BOSS MT-2 Metal Zone(*) "
+The Bright control gives you even more flexibility. It can add presence to darker sounding amps, or remove buzzing when needed.
 
-        "(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with this software. "
-        "BOSS MT-2 Metal Zone is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this "
-        "product. All other trademarks are the property of their respective holders.'" ;
+The Gate control sets the noise gate threshold. In the plugin interface, this control lights up to indicate that the noise gate is active.
+
+Features:
+Modeled by Brummer
+Based on the Horizon Devices Precision Drive(*)
+
+(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with MOD.
+Horizon Devices Precision Drive is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this 
+product. All other trademarks are the property of their respective holders.'
+)" ;
     }
 
     const char* getMaker() const noexcept override {
