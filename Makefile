@@ -88,6 +88,7 @@ libs:
 
 plugins: libs
 	$(MAKE) all -C plugins/MetalTone
+	$(MAKE) all -C plugins/CollisionDrive
 
 ifneq ($(CROSS_COMPILING),true)
 gen: plugins dpf/utils/lv2_ttl_generator
@@ -109,13 +110,16 @@ clean:
 	$(MAKE) clean -C dpf/dgl
 	$(MAKE) clean -C dpf/utils/lv2-ttl-generator
 	$(MAKE) clean -C plugins/MetalTone
+	$(MAKE) clean -C plugins/CollisionDrive
 	rm -rf bin build
 
 install: all
 	$(MAKE) install -C plugins/MetalTone
+	$(MAKE) install -C plugins/CollisionDrive
 
 install-user: all
 	$(MAKE) install-user -C plugins/MetalTone
+	$(MAKE) install-user -C plugins/CollisionDrive
 
 # --------------------------------------------------------------
 

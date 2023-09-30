@@ -504,7 +504,14 @@ protected:
     {
         value = 0.0f;
         state = 0;
+        fontSize = getFontSize();
         prelight = false;
+    }
+
+    uint getFontSize()
+    {
+        size_t s = strlen(label);
+        return (s * 0.7);
     }
 
     void onCairoDisplay(const CairoGraphicsContext& context) override
@@ -516,7 +523,7 @@ protected:
 
         cairo_push_group (cr);
 
-        theme.setCairoColour(cr, theme.idColourBackgroundNormal, true);
+        theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
         cairo_paint(cr);
 
         if (prelight) {
@@ -545,7 +552,7 @@ protected:
             offset = 2;
         }
         theme.setCairoColour(cr, theme.idColourForgroundNormal);
-        cairo_set_font_size (cr, h/4.2);
+        cairo_set_font_size (cr, w / fontSize);
         cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
                                    CAIRO_FONT_WEIGHT_BOLD);
         cairo_text_extents(cr, label , &extents);
@@ -606,6 +613,7 @@ private:
     bool prelight;
     const char* label;
     const uint32_t port;
+    uint fontSize;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoSwitch)
 };
 
@@ -616,7 +624,7 @@ class CairoKnob : public CairoSubWidget
 public:
 
     explicit CairoKnob(SubWidget* const parent, CairoColourTheme &theme_, bool *blocked_,
-                            UI *ui, const char* lab, const uint32_t index, bool center_ = false)
+            UI *ui, const char* lab, const uint32_t index, bool center_ = false, bool indicator = false)
         : CairoSubWidget(parent),
           theme(theme_),
           blocked(blocked_),
@@ -624,13 +632,14 @@ public:
                                 {ui->setParameterValue(index, value);}),
           label(lab),
           port(index),
-          center(center_)
+          center(center_),
+          isIndicator(indicator)
           {
             init();
           }
 
     explicit CairoKnob(TopLevelWidget* const parent, CairoColourTheme &theme_, bool *blocked_,
-                                UI *ui, const char* lab, const uint32_t index, bool center_ = false)
+            UI *ui, const char* lab, const uint32_t index, bool center_ = false, bool indicator = false)
         : CairoSubWidget(parent),
           theme(theme_),
           blocked(blocked_),
@@ -638,7 +647,8 @@ public:
                                 {ui->setParameterValue(index, value);}),
           label(lab),
           port(index),
-          center(center_)
+          center(center_),
+          isIndicator(indicator)
           {
             init();
           }
@@ -657,6 +667,13 @@ public:
         max_value = max_value_;
         value_step = value_step_;
         state = getState();
+        stepper = get_stepper();
+        repaint();
+    }
+
+    void setIndicator(float v)
+    {
+        indic = (int)v;
         repaint();
     }
 
@@ -669,12 +686,23 @@ protected:
         max_value = 1.0f;
         value_step = 0.01f;
         posY = 0.0f;
+        v = 0;
+        indic = 0.0f;
         inDrag = false;
         state = getState();
         prelight = false;
+        stepper = get_stepper();
     }
 
-    float getState() {
+    float get_stepper()
+    {
+        float range = std::fabs(max_value - min_value);
+        float steps = range / value_step;
+        return steps * 0.01f;
+    }
+
+    float getState()
+    {
         return (value - min_value) / (max_value - min_value);
     }
 
@@ -724,7 +752,15 @@ protected:
         cairo_new_path (cr);
 
         cairo_arc(cr,knobx1, knoby1, knob_x/3.1, 0, 2 * M_PI );
-        theme.setCairoColour(cr, theme.idColourBackgroundNormal);
+        if (isIndicator)
+        {
+            if (indic) theme.setCairoColour(cr, theme.idColourBackgroundNormal);
+            else theme.setCairoColour(cr, theme.idColourBackgroundActive, 0.3);
+        }
+        else
+        {
+            theme.setCairoColour(cr, theme.idColourBackgroundNormal);
+        }
         cairo_fill_preserve (cr);
         theme.knobShadowInset(cr, width, height);
         cairo_new_path (cr);
@@ -764,6 +800,9 @@ protected:
         /** show value on the kob**/
         theme.setCairoColour(cr, theme.idColourForground);
         cairo_text_extents_t extents;
+        cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
+                                   CAIRO_FONT_WEIGHT_BOLD);
+        cairo_set_font_size (cr, height * 0.15);
         char s[64];
         const char* format[] = {"%.1f", "%.2f", "%.3f"};
         if (fabs(value_step)>0.99) {
@@ -773,11 +812,8 @@ protected:
         } else {
             snprintf(s, 63, format[2-1], value);
         }
-        cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
-                                   CAIRO_FONT_WEIGHT_BOLD);
-        cairo_set_font_size (cr, height * 0.15);
-        cairo_text_extents(cr, "0.00", &extents);
-        cairo_move_to (cr, knobx1-extents.width/2, knoby1+extents.height/2);
+        cairo_text_extents(cr, s, &extents);
+        cairo_move_to (cr, knobx1-(int)extents.width/2, knoby1+extents.height/2);
         cairo_show_text(cr, s);
         cairo_new_path (cr);
 
@@ -800,7 +836,7 @@ protected:
             int set_value = 0;
             if (event.key == 57357) set_value = 1; // UpArrow
             else if (event.key == 57359) set_value = -1; // DownArrow
-            float  v = value + ((max_value - min_value) * value_step * set_value);
+            float  v = value + (value_step * set_value);
             v = MIN(max_value, MAX(min_value, v));
             setValue(v);
             setParameterValue(port, value);
@@ -829,9 +865,9 @@ protected:
             return CairoSubWidget::onScroll(event);
 
         const float set_value = (event.delta.getY() > 0.f) ? 1.f : -1.f;
-        float  v = value + ((max_value - min_value) * value_step * set_value);
-        v = MIN(max_value, MAX(min_value, v));
-        setValue(v);
+        float  v1 = value + (value_step * set_value);
+        v1 = MIN(max_value, MAX(min_value, v1));
+        setValue(v1);
         setParameterValue(port, value);
         
         return CairoSubWidget::onScroll(event);
@@ -841,11 +877,17 @@ protected:
     {
         if (inDrag)
         {
-            float  v = value + ((max_value - min_value) * (posY - event.pos.getY()) * 0.25 * value_step);
-            v = MIN(max_value, MAX(min_value, v));
+            const float set_value = (posY - event.pos.getY() > 0.f) ? 1.f : -1.f ;
+            v += stepper * value_step;
             posY = event.pos.getY();
-            setValue(v);
-            setParameterValue(port, value);
+            if (v >= value_step)
+            {
+                v = value + (value_step * set_value);
+                v = MIN(max_value, MAX(min_value, v));
+                setValue(v);
+                setParameterValue(port, value);
+                v = 0;
+            }
         }
         if (contains(event.pos)) // enter
         {
@@ -874,12 +916,16 @@ private:
     float max_value;
     float value_step;
     float posY;
+    float v;
+    float stepper;
     bool inDrag;
     float state;
     bool prelight;
     const char* label;
     const uint32_t port;
     bool center;
+    bool isIndicator;
+    int indic;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoKnob)
 };
 
