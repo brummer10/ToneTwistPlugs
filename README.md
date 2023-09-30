@@ -44,10 +44,12 @@ product. All other trademarks are the property of their respective holders.
 
 ## Formats
 
-Neural Record come in the following plug-in formats:
+ToneTwist Plugs come in the following plug-in formats:
 
 * [LV2]
+* [VST2]
 * [VST3]
+* [CLAP]
 
 ## Compiling
 
@@ -82,7 +84,9 @@ You can also set the installation directory for each plugin format with a
 dedicated makefile variable.
 
 * LV2: `LV2_DIR` (`<prefix>/lib/lv2`)
+* VST2: `VST3_DIR` (`<prefix>/lib/vst2`)
 * VST3: `VST3_DIR` (`<prefix>/lib/vst3`)
+* CLAP: `CLAP_DIR` (`<prefix>/lib/clap`)
 
 Example:
 
@@ -135,4 +139,6 @@ This project is built using the DISTRHO Plugin Framework ([DPF])
 [DPF]: https://github.com/DISTRHO/DPF
 [LV2]: http://lv2plug.in/
 [pkgconf]: https://github.com/pkgconf/pkgconf
+[VST2]: https://en.wikipedia.org/wiki/Virtual_Studio_Technology
 [VST3]: https://en.wikipedia.org/wiki/Virtual_Studio_Technology
+[CLAP]:https://en.wikipedia.org/wiki/CLever_Audio_Plug-in
