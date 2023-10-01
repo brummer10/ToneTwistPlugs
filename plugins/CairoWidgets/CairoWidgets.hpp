@@ -414,9 +414,9 @@ protected:
     {
         cairo_t* const cr = context.handle;
         const Size<uint> sz = getSize();
-        const int w = sz.getWidth()-2;
-        const int h = sz.getHeight()-2;
-        const int r = h < w ? h * 0.5 : w * 0.5;
+        const int w = sz.getWidth();
+        const int h = sz.getHeight();
+        const int r = h < w ? (h - 2) * 0.5 : (w - 2) * 0.5;
 
         cairo_push_group (cr);
         cairo_arc(cr,w * 0.5, h * 0.5, r, 0, 2 * M_PI );
@@ -551,12 +551,12 @@ protected:
         if(state==1) {
             offset = 2;
         }
-        theme.setCairoColour(cr, theme.idColourForgroundNormal);
         cairo_set_font_size (cr, w / fontSize);
         cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
                                    CAIRO_FONT_WEIGHT_BOLD);
         cairo_text_extents(cr, label , &extents);
 
+        theme.setCairoColour(cr, theme.idColourForgroundNormal);
         cairo_move_to (cr, (w-extents.width)*0.5 +offset, (h+extents.height)*0.75 +offset);
         cairo_show_text(cr, label);
 
@@ -803,17 +803,21 @@ protected:
         cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
                                    CAIRO_FONT_WEIGHT_BOLD);
         cairo_set_font_size (cr, height * 0.15);
-        char s[64];
+        char s[17];
+        char sa[17];
         const char* format[] = {"%.1f", "%.2f", "%.3f"};
         if (fabs(value_step)>0.99) {
-            snprintf(s, 63,"%d",  (int) value);
+            snprintf(s, 16,"%d",  (int) value);
         } else if (fabs(value_step)>0.09) {
-            snprintf(s, 63, format[1-1], value);
+            snprintf(s, 16, format[1-1], value);
         } else {
-            snprintf(s, 63, format[2-1], value);
+            snprintf(s, 16, format[2-1], value);
         }
+        snprintf(sa, strlen(s),"%s",  "000000000000000");
+        cairo_text_extents(cr, sa, &extents);
+        int wx = extents.width * 0.5;
         cairo_text_extents(cr, s, &extents);
-        cairo_move_to (cr, knobx1-(int)extents.width/2, knoby1+extents.height/2);
+        cairo_move_to (cr, knobx1 - wx, knoby1+extents.height/2);
         cairo_show_text(cr, s);
         cairo_new_path (cr);
 
@@ -875,7 +879,7 @@ protected:
 
     bool onMotion(const MotionEvent& event) override
     {
-        if (inDrag)
+        if (inDrag && (std::abs(posY - event.pos.getY()) > 0.f))
         {
             const float set_value = (posY - event.pos.getY() > 0.f) ? 1.f : -1.f ;
             v += stepper * value_step;

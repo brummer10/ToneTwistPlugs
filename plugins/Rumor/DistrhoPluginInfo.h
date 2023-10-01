@@ -1,5 +1,5 @@
 /*
- * MetalTone audio effect based on DISTRHO Plugin Framework (DPF)
+ * Rumor audio effect based on DISTRHO Plugin Framework (DPF)
  *
  * SPDX-License-Identifier:  GPL-2.0 license 
  *
@@ -10,9 +10,9 @@
 #define DISTRHO_PLUGIN_INFO_H
 
 #define DISTRHO_PLUGIN_BRAND "brummer"
-#define DISTRHO_PLUGIN_NAME  "MetalTone"
-#define DISTRHO_PLUGIN_URI   "urn:brummer10:metaltone"
-#define DISTRHO_PLUGIN_CLAP_ID "com.github.brummer10.metaltone"
+#define DISTRHO_PLUGIN_NAME  "Rumor"
+#define DISTRHO_PLUGIN_URI   "urn:brummer10:rumor"
+#define DISTRHO_PLUGIN_CLAP_ID "com.github.brummer10.rumor"
 
 #define DISTRHO_PLUGIN_HAS_UI           1
 #define DISTRHO_UI_USE_NANOVG           0

@@ -42,6 +42,23 @@ Based on the Horizon Devices Precision Drive(*)
 Horizon Devices Precision Drive is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this 
 product. All other trademarks are the property of their respective holders.
 
+## Rumor
+
+![Rumor](https://github.com/brummer10/ToneTwistPlugs/blob/main/Rumor.png?raw=true)
+
+The Rumor is modeled after the Devi Ever Ruiner(*), a pure, nasty growling Bass Fuzz pedal, 
+with bold out-front presence, and cutting articulation.
+
+It features Level and a Intensity control.
+
+Features: 
+Modeled by Brummer 
+Based on the Devi Ever Ruiner(*)
+
+(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with this software. 
+Devi Ever Ruiner is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this 
+product. All other trademarks are the property of their respective holders.'
+
 ## Formats
 
 ToneTwist Plugs come in the following plug-in formats:
@@ -59,7 +76,7 @@ sub-modules) and simply run `make` in the project's root directory:
 
 ```con
 git clone --recursive https://github.com:brummer10/ToneTwistPlugs
-cd neuralrecord
+cd ToneTwistPlugs
 make
 ```
 
