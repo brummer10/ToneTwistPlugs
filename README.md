@@ -59,6 +59,20 @@ Based on the Devi Ever Ruiner(*)
 Devi Ever Ruiner is a trademark or trade name of another manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this 
 product. All other trademarks are the property of their respective holders.'
 
+## TubeScreamer
+
+![TubeScreamer](https://github.com/brummer10/ToneTwistPlugs/blob/main/TubeScreamer.png?raw=true)
+
+TubeScreamer is a analog emulation of the classic Ibanez TS-9(*)
+
+Features: 
+Modeled by Brummer 
+Based on the Ibanez TS-9(*) 
+
+(*) 'Other product names modeled in this software are trademarks of their respective companies that do not endorse and are not associated or affiliated with this software. 
+Ibanez TS-9 is trademark or trade name of other manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this product. 
+All other trademarks are the property of their respective holders.' 
+
 ## Formats
 
 ToneTwist Plugs come in the following plug-in formats:
