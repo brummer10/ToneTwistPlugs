@@ -35,7 +35,7 @@ FILES_UI = \
 UI_TYPE = cairo
 include ../../dpf/Makefile.plugins.mk
 
-BUILD_CXX_FLAGS += -I../CairoWidgets
+BUILD_CXX_FLAGS += -pthread -I../CairoWidgets
 
 # --------------------------------------------------------------
 # Enable all selected plugin types
