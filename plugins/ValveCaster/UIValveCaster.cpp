@@ -21,6 +21,7 @@ UIValveCaster::UIValveCaster()
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
     theme.setIdColour(theme.idColourForgroundNormal, 0.133, 0.02, 0.0, 1.0);
+    theme.setIdColour(theme.idColourForgroundPrelight, 0.933, 0.82, 0.8, 1.0);
     theme.setIdColour(theme.idColourBackgroundActive, 0.667, 0.149, 0.008, 1.0);
     theme.setIdColour(theme.idColourBackground, 0.616, 0.486, 0.353, 1.0);
 

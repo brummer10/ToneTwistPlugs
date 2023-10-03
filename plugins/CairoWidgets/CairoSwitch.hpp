@@ -103,7 +103,7 @@ protected:
         cairo_stroke_preserve (cr);
 
         cairo_new_path(cr);
-        cairo_arc(cr,centerW, centerH, h/2.2, 0, 2 * M_PI );
+        cairo_arc(cr,centerW, centerH, h/2.8, 0, 2 * M_PI );
         theme.setCairoColour(cr, theme.idColourBackground);
         cairo_fill_preserve(cr);
         theme.knobShadowOutset(cr, w * 0.5 , h, centerW - centerH, 0);
@@ -112,7 +112,7 @@ protected:
         cairo_stroke_preserve (cr);
 
         cairo_new_path(cr);
-        cairo_arc(cr,centerW, centerH, h/2.8, 0, 2 * M_PI );
+        cairo_arc(cr,centerW, centerH, h/3.6, 0, 2 * M_PI );
         theme.setCairoColour(cr, theme.idColourBackgroundNormal);
         cairo_fill_preserve(cr);
         theme.knobShadowInset(cr, w * 0.5 , h, centerW - centerH, 0);
