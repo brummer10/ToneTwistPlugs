@@ -27,8 +27,6 @@ UINewPedal::UINewPedal()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "NewPedal", PluginNewPedal::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
-
-    setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
 UINewPedal::~UINewPedal() {

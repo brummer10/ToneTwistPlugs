@@ -56,8 +56,6 @@ UICollisionDrive::UICollisionDrive()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "CollisionDrive", PluginCollisionDrive::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
-
-    setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
 UICollisionDrive::~UICollisionDrive() {

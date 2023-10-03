@@ -50,8 +50,6 @@ UIValveCaster::UIValveCaster()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "ValveCaster", PluginValveCaster::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
-
-    setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
 UIValveCaster::~UIValveCaster() {

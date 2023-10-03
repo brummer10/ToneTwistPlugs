@@ -38,8 +38,6 @@ UIRumor::UIRumor()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "Rumor   ", PluginRumor::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
-
-    setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
 UIRumor::~UIRumor() {
