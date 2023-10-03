@@ -14,7 +14,6 @@
 #include <functional>
 
 #include "CairoColourTheme.hpp"
-#include "CairoLed.hpp"
 
 START_NAMESPACE_DGL
 
@@ -25,11 +24,10 @@ class CairoSwitch : public CairoSubWidget
 public:
 
     explicit CairoSwitch(SubWidget* const parent, CairoColourTheme &theme_,
-            bool *blocked_, ScopedPointer<CairoLed>& led_, UI *ui, const char* lab, const uint32_t index)
+                    bool *blocked_, UI *ui, const char* lab, const uint32_t index)
         : CairoSubWidget(parent),
           theme(theme_),
           blocked(blocked_),
-          led(led_),
           setParameterValue([ui] (const uint32_t index, float value)
                                 {ui->setParameterValue(index, value);}),
           label(lab),
@@ -39,11 +37,10 @@ public:
           }
 
     explicit CairoSwitch(TopLevelWidget* const parent, CairoColourTheme &theme_,
-            bool *blocked_, ScopedPointer<CairoLed>& led_, UI *ui, const char* lab, const uint32_t index)
+                    bool *blocked_, UI *ui, const char* lab, const uint32_t index)
         : CairoSubWidget(parent),
           theme(theme_),
           blocked(blocked_),
-          led(led_),
           setParameterValue([ui] (const uint32_t index, float value)
                                 {ui->setParameterValue(index, value);}),
           label(lab),
@@ -55,6 +52,7 @@ public:
     void setValue(float v)
     {
         value = v;
+        state = (int)value;
         repaint();
     }
 
@@ -64,14 +62,16 @@ protected:
     {
         value = 0.0f;
         state = 0;
-        fontSize = getFontSize();
         prelight = false;
     }
 
-    uint getFontSize()
-    {
-        size_t s = strlen(label);
-        return (s * 0.7);
+
+    void roundrec(cairo_t *cr, double x, double y, double width, double height, double r) {
+        cairo_arc(cr, x+r, y+r, r, M_PI, 3*M_PI/2);
+        cairo_arc(cr, x+width-r, y+r, r, 3*M_PI/2, 0);
+        cairo_arc(cr, x+width-r, y+height-r, r, 0, M_PI/2);
+        cairo_arc(cr, x+r, y+height-r, r, M_PI/2, M_PI);
+        cairo_close_path(cr);
     }
 
     void onCairoDisplay(const CairoGraphicsContext& context) override
@@ -79,45 +79,54 @@ protected:
         cairo_t* const cr = context.handle;
         const Size<uint> sz = getSize();
         const int w = sz.getWidth();
-        const int h = sz.getHeight();
+        const int h = sz.getHeight() * 0.5;
+        const int centerH = h * 0.5;
+        const int centerW = state ? w - centerH : centerH ;
+        const int offset = h * 0.2;
 
         cairo_push_group (cr);
+        
+        roundrec(cr, 1, 1, w-2, h-2, centerH);
+        theme.knobShadowOutset(cr, w  , h, 0, 0);
+        cairo_stroke_preserve (cr);
 
-        theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
-        cairo_paint(cr);
-
-        if (prelight) {
-            theme.setCairoColour(cr, theme.idColourBackgroundPrelight);
-            cairo_paint(cr);
-        }
-
+        cairo_new_path(cr);
+        roundrec(cr, offset, offset, w - (offset * 2), h - (offset * 2), centerH-offset);
+        theme.setCairoColour(cr, theme.idColourBoxShadow);
+        cairo_fill_preserve(cr);
         if (state) {
-            cairo_rectangle(cr, 1, 1, w -2, h -2);
-            cairo_set_line_width(cr,2);
-            theme.setCairoColour(cr, theme.idColourBackgroundNormal);
-            cairo_stroke(cr);
-            cairo_set_line_width(cr,1);
-            cairo_move_to(cr, 1,h);
-            cairo_line_to(cr, 1, 1);
-            cairo_line_to(cr, w-2, 1);
-            theme.setCairoColour(cr, theme.idColourBoxShadow);
-            cairo_stroke(cr);
+            theme.setCairoColourWithAlpha(cr, theme.idColourBackgroundActive, 0.6f);
+            cairo_fill_preserve(cr);
         }
-        else
-            theme.boxShadow(cr, w, h, 5, 5);
+        theme.setCairoColour(cr, theme.idColourBoxShadow);
+        cairo_set_line_width(cr,1);
+        cairo_stroke_preserve (cr);
 
-        int offset = 0;
+        cairo_new_path(cr);
+        cairo_arc(cr,centerW, centerH, h/2.2, 0, 2 * M_PI );
+        theme.setCairoColour(cr, theme.idColourBackground);
+        cairo_fill_preserve(cr);
+        theme.knobShadowOutset(cr, w * 0.5 , h, centerW - centerH, 0);
+        theme.setCairoColour(cr, theme.idColourBoxShadow);
+        cairo_set_line_width(cr,1);
+        cairo_stroke_preserve (cr);
+
+        cairo_new_path(cr);
+        cairo_arc(cr,centerW, centerH, h/2.8, 0, 2 * M_PI );
+        theme.setCairoColour(cr, theme.idColourBackgroundNormal);
+        cairo_fill_preserve(cr);
+        theme.knobShadowInset(cr, w * 0.5 , h, centerW - centerH, 0);
+        cairo_stroke (cr);
+
         cairo_text_extents_t extents;
-        if(state==1) {
-            offset = 2;
-        }
-        cairo_set_font_size (cr, w / fontSize);
+        if (prelight) theme.setCairoColour(cr, theme.idColourForgroundPrelight);
+        else theme.setCairoColour(cr, theme.idColourForgroundNormal);
+        cairo_set_font_size (cr, h * 0.5);
         cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL,
                                    CAIRO_FONT_WEIGHT_BOLD);
         cairo_text_extents(cr, label , &extents);
 
-        theme.setCairoColour(cr, theme.idColourForgroundNormal);
-        cairo_move_to (cr, (w-extents.width)*0.5 +offset, (h+extents.height)*0.75 +offset);
+        cairo_move_to (cr, (w-extents.width)*0.5, (h+extents.height + offset));
         cairo_show_text(cr, label);
 
         cairo_pop_group_to_source (cr);
@@ -126,21 +135,27 @@ protected:
 
     bool onMouse(const MouseEvent& event) override
     {
-        if (event.press && (event.button == 1)  && contains(event.pos)) // mouse button is pressed
+        if (!event.press && contains(event.pos)) // mouse button release
         {
             value = value ? 0.0f : 1.0f;
-            state = 1;
-            led->setValue(value);
+            state = !state;
             setParameterValue(port, value);
-            repaint();
-        }
-        else if (state)
-        {
-            state = 0;
             repaint();
         }
 
         return CairoSubWidget::onMouse(event);
+    }
+
+    bool onScroll(const ScrollEvent& event) override
+    {
+        if (!contains(event.pos))
+            return CairoSubWidget::onScroll(event);
+
+        const float set_value = (event.delta.getY() > 0.f) ? 1.f : 0.f;
+        setValue(set_value);
+        setParameterValue(port, value);
+        
+        return CairoSubWidget::onScroll(event);
     }
 
     bool onMotion(const MotionEvent& event) override
@@ -166,14 +181,12 @@ protected:
 private:
     CairoColourTheme &theme;
     bool *blocked;
-    ScopedPointer<CairoLed>& led;
     std::function<void(const uint32_t, float) > setParameterValue;
     float value;
     uint state;
     bool prelight;
     const char* label;
     const uint32_t port;
-    uint fontSize;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoSwitch)
 };
 

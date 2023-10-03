@@ -1,12 +1,12 @@
 /*
- * TubeScreamer audio effect based on DISTRHO Plugin Framework (DPF)
+ * ValveCaster audio effect based on DISTRHO Plugin Framework (DPF)
  *
  * SPDX-License-Identifier:  GPL-2.0 license 
  *
  * Copyright (C) 2023 brummer <brummer@web.de>
  */
 
-#include "UITubeScreamer.hpp"
+#include "UIValveCaster.hpp"
 #include "Window.hpp"
 
 START_NAMESPACE_DISTRHO
@@ -14,42 +14,46 @@ START_NAMESPACE_DISTRHO
 // -----------------------------------------------------------------------
 // Init / Deinit
 
-UITubeScreamer::UITubeScreamer()
+UIValveCaster::UIValveCaster()
 : UI(285, 400, true), theme() {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
-    theme.setIdColour(theme.idColourForgroundNormal, 0.0, 0.271, 0.212, 1.0);
-    theme.setIdColour(theme.idColourBackgroundActive, 0.204, 0.922, 0.278, 1.0);
-    theme.setIdColour(theme.idColourBackground, 0.008, 0.643, 0.467, 1.0);
+    theme.setIdColour(theme.idColourForgroundNormal, 0.133, 0.02, 0.0, 1.0);
+    theme.setIdColour(theme.idColourBackgroundActive, 0.667, 0.149, 0.008, 1.0);
+    theme.setIdColour(theme.idColourBackground, 0.616, 0.486, 0.353, 1.0);
 
-    levelKnob = new CairoKnob(this, theme, &blocked,
-                dynamic_cast<UI*>(this), "Level", PluginTubeScreamer::LEVEL);
-    levelKnob->setAdjustment(16.0, -20.0, 4.0, 0.1);
-    sizeGroup->addToSizeGroup(levelKnob, 35, 45, 80, 100);
+    gainKnob = new CairoKnob(this, theme, &blocked,
+                dynamic_cast<UI*>(this), "Gain", PluginValveCaster::GAIN);
+    gainKnob->setAdjustment(0.5, 0.0, 1.0, 0.01);
+    sizeGroup->addToSizeGroup(gainKnob, 35, 40, 80, 100);
 
     toneKnob = new CairoKnob(this, theme, &blocked,
-                dynamic_cast<UI*>(this), "Tone", PluginTubeScreamer::TONE);
-    toneKnob->setAdjustment(400.0, 100.0, 1000.0, 5.0);
-    sizeGroup->addToSizeGroup(toneKnob, 107, 105, 70, 90);
+                dynamic_cast<UI*>(this), "Tone", PluginValveCaster::TONE, true);
+    toneKnob->setAdjustment(0.5, 0.0, 1.0, 0.01);
+    sizeGroup->addToSizeGroup(toneKnob, 107, 106, 70, 90);
 
-    driveKnob = new CairoKnob(this, theme, &blocked,
-                dynamic_cast<UI*>(this), "Drive", PluginTubeScreamer::DRIVE);
-    driveKnob->setAdjustment(0.5, 0.0, 1.0, 0.01);
-    sizeGroup->addToSizeGroup(driveKnob, 170, 45, 80, 100);
+    volumeKnob = new CairoKnob(this, theme, &blocked,
+                dynamic_cast<UI*>(this), "Volume", PluginValveCaster::VOLUME);
+    volumeKnob->setAdjustment(0.5, 0.0, 1.0, 0.01);
+    sizeGroup->addToSizeGroup(volumeKnob, 170, 40, 80, 100);
+
+    boostSelect = new CairoSwitch(this, theme, &blocked,
+                dynamic_cast<UI*>(this), "Boost", PluginValveCaster::BOOST);
+    sizeGroup->addToSizeGroup(boostSelect, 185, 146, 50, 60);
 
     bypassLed = new CairoLed(this, theme);
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
-                dynamic_cast<UI*>(this), "TubeScreamer", PluginTubeScreamer::BYPASS);
+                dynamic_cast<UI*>(this), "ValveCaster", PluginValveCaster::BYPASS);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
 }
 
-UITubeScreamer::~UITubeScreamer() {
+UIValveCaster::~UIValveCaster() {
 
 }
 
@@ -60,21 +64,24 @@ UITubeScreamer::~UITubeScreamer() {
   A parameter has changed on the plugin side.
   This is called by the host to inform the UI about parameter changes.
 */
-void UITubeScreamer::parameterChanged(uint32_t index, float value) {
+void UIValveCaster::parameterChanged(uint32_t index, float value) {
     // fprintf(stderr, "index %i, value %f\n", index, value);
     switch (index) {
-         case PluginTubeScreamer::BYPASS:
+         case PluginValveCaster::BYPASS:
             bypassSwitch->setValue(value);
             bypassLed->setValue(value);
             break;
-         case PluginTubeScreamer::LEVEL:
-            levelKnob->setValue(value);
+         case PluginValveCaster::GAIN:
+            gainKnob->setValue(value);
             break;
-         case PluginTubeScreamer::TONE:
+         case PluginValveCaster::TONE:
             toneKnob->setValue(value);
             break;
-         case PluginTubeScreamer::DRIVE:
-            driveKnob->setValue(value);
+         case PluginValveCaster::VOLUME:
+            volumeKnob->setValue(value);
+            break;
+         case PluginValveCaster::BOOST:
+            boostSelect->setValue(value);
             break;
    }
 }
@@ -82,7 +89,7 @@ void UITubeScreamer::parameterChanged(uint32_t index, float value) {
 /**
   Optional callback to inform the UI about a sample rate change on the plugin side.
 */
-void UITubeScreamer::sampleRateChanged(double newSampleRate) {
+void UIValveCaster::sampleRateChanged(double newSampleRate) {
     (void) newSampleRate ;
 }
 
@@ -93,14 +100,14 @@ void UITubeScreamer::sampleRateChanged(double newSampleRate) {
   Idle callback.
   This function is called at regular intervals.
 */
-void UITubeScreamer::uiIdle() {
+void UIValveCaster::uiIdle() {
 
 }
 
 /**
   Window reshape function, called when the parent window is resized.
 */
-void UITubeScreamer::uiReshape(uint width, uint height) {
+void UIValveCaster::uiReshape(uint width, uint height) {
     (void)width;
     (void)height;
 }
@@ -111,7 +118,7 @@ void UITubeScreamer::uiReshape(uint width, uint height) {
 /**
   A function called to draw the view contents.
 */
-void UITubeScreamer::onCairoDisplay(const CairoGraphicsContext& context) {
+void UIValveCaster::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_t* const cr = context.handle;
     const int width = getWidth();
     const int height = getHeight();
@@ -132,14 +139,14 @@ void UITubeScreamer::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_paint (cr);
 }
 
-void UITubeScreamer::onResize(const ResizeEvent& ev)
+void UIValveCaster::onResize(const ResizeEvent& ev)
 {
     UI::onResize(ev);
     sizeGroup->resizeAspectSizeGroup(ev.size.getWidth(), ev.size.getHeight());
 }
 
 UI* createUI() {
-    return new UITubeScreamer;
+    return new UIValveCaster;
 }
 
 // -----------------------------------------------------------------------

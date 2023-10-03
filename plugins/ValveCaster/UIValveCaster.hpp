@@ -1,18 +1,18 @@
 /*
- * NewPedal audio effect based on DISTRHO Plugin Framework (DPF)
+ * ValveCaster audio effect based on DISTRHO Plugin Framework (DPF)
  *
  * SPDX-License-Identifier:  GPL-2.0 license 
  *
  * Copyright (C) 2023 brummer <brummer@web.de>
  */
 
-#ifndef UI_NEWPEDAL_H
-#define UI_NEWPEDAL_H
+#ifndef UI_VALVECASTER_H
+#define UI_VALVECASTER_H
 
 #include <functional>
 #include <list>
 #include "DistrhoUI.hpp"
-#include "PluginNewPedal.hpp"
+#include "PluginValveCaster.hpp"
 #include "Cairo.hpp"
 #include "CairoWidgets.hpp"
 
@@ -108,11 +108,11 @@ private:
   The main UI class
 */
 
-class UINewPedal : public UI
+class UIValveCaster : public UI
 {
 public:
-    UINewPedal();
-    ~UINewPedal();
+    UIValveCaster();
+    ~UIValveCaster();
 
 protected:
     void parameterChanged(uint32_t, float value) override;
@@ -132,9 +132,13 @@ private:
     bool blocked;
     ScopedPointer<UiSizeGroup> sizeGroup;
 
+    ScopedPointer<CairoKnob> gainKnob;
+    ScopedPointer<CairoKnob> toneKnob;
+    ScopedPointer<CairoKnob> volumeKnob;
+    ScopedPointer<CairoSwitch> boostSelect;
     ScopedPointer<CairoPushButton> bypassSwitch;
     ScopedPointer<CairoLed> bypassLed;
-    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UINewPedal)
+    DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UIValveCaster)
 };
 
 END_NAMESPACE_DISTRHO

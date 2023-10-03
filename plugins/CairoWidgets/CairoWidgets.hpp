@@ -14,10 +14,11 @@
 #include "CairoColourTheme.hpp"
 #include "CairoButton.hpp"
 #include "CairoLed.hpp"
-#include "CairoSwitch.hpp"
+#include "CairoPushButton.hpp"
 #include "CairoKnob.hpp"
 #include "CairoProgressBar.hpp"
 #include "CairoPeekMeter.hpp"
 #include "CairoToolTip.hpp"
+#include "CairoSwitch.hpp"
 
 #endif

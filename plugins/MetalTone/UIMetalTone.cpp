@@ -55,7 +55,7 @@ UIMetalTone::UIMetalTone()
     bypassLed = new CairoLed(this, theme);
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
-    bypassSwitch = new CairoSwitch(this, theme, &blocked, bypassLed,
+    bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "MetalTone", PluginMetalTone::BYPASS);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 

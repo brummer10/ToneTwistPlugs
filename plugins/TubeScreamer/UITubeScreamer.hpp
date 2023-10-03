@@ -135,7 +135,7 @@ private:
     ScopedPointer<CairoKnob> levelKnob;
     ScopedPointer<CairoKnob> toneKnob;
     ScopedPointer<CairoKnob> driveKnob;
-    ScopedPointer<CairoSwitch> bypassSwitch;
+    ScopedPointer<CairoPushButton> bypassSwitch;
     ScopedPointer<CairoLed> bypassLed;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UITubeScreamer)
 };

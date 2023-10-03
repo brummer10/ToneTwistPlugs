@@ -73,6 +73,20 @@ Based on the Ibanez TS-9(*)
 Ibanez TS-9 is trademark or trade name of other manufacturer and was used merely to identify the product whose sound was reviewed in the creation of this product. 
 All other trademarks are the property of their respective holders.' 
 
+## ValveCaster
+
+![ValveCaster](https://github.com/brummer10/ToneTwistPlugs/blob/main/ValveCaster.png?raw=true)
+
+The ValveCaster is a famous DIY guitar pedal schematic first put together in 2007 by Matsumin. 
+Originally, the goal was to create a real tube boost/overdrive pedal that would run 
+on a single 9 volt battery. 
+With its wide range of drives, distortions and fuzzes, the ValveCaster adds a harsher, 
+brighter colouring to the sound while offering a precise, nuanced range within the tone control. 
+
+Features: 
+Modeled by Brummer 
+Based on the ValveCaster by Matsumin
+
 ## Formats
 
 ToneTwist Plugs come in the following plug-in formats:

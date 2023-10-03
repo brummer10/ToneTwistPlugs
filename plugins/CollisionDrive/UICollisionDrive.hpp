@@ -136,7 +136,7 @@ private:
     ScopedPointer<CairoKnob> driveKnob;
     ScopedPointer<CairoKnob> gateKnob;
     ScopedPointer<CairoKnob> levelKnob;
-    ScopedPointer<CairoSwitch> bypassSwitch;
+    ScopedPointer<CairoPushButton> bypassSwitch;
     ScopedPointer<CairoLed> bypassLed;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UICollisionDrive)
 };

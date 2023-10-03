@@ -36,6 +36,11 @@ public:
                                 idColour.b * darker, idColour.a);
     }
 
+    void setCairoColourWithAlpha(cairo_t* const cr, const CairoColour idColour, float alpha = 1.0f)
+    {
+        cairo_set_source_rgba(cr, idColour.r, idColour.g, idColour.b, alpha);
+    }
+
     void setIdColour(CairoColour &idColour, double r, double g, double b, double a) {
         idColour = CairoColour {r, g, b, a};
     }
@@ -157,9 +162,9 @@ public:
         pat = NULL;
     }
 
-    void knobShadowOutset(cairo_t* const cr, int width, int height)
+    void knobShadowOutset(cairo_t* const cr, int width, int height, int x = 0, int y = 0)
     {
-        cairo_pattern_t *pat = cairo_pattern_create_linear (0, 0, width, height);
+        cairo_pattern_t *pat = cairo_pattern_create_linear (x, y, x + width, y + height);
         cairo_pattern_add_color_stop_rgba
             (pat, 0, idColourBoxLight.r, idColourBoxLight.g, idColourBoxLight.b, idColourBoxLight.a);
         cairo_pattern_add_color_stop_rgba
@@ -174,9 +179,9 @@ public:
         cairo_pattern_destroy (pat);
     }
 
-    void knobShadowInset(cairo_t* const cr, int width, int height)
+    void knobShadowInset(cairo_t* const cr, int width, int height, int x = 0, int y = 0)
     {
-        cairo_pattern_t* pat = cairo_pattern_create_linear (0, 0, width, height);
+        cairo_pattern_t* pat = cairo_pattern_create_linear (x, y, x + width, y + height);
         cairo_pattern_add_color_stop_rgba
             (pat, 1, idColourBoxLight.r, idColourBoxLight.g, idColourBoxLight.b, idColourBoxLight.a);
         cairo_pattern_add_color_stop_rgba

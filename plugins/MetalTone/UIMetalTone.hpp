@@ -137,7 +137,7 @@ private:
     ScopedPointer<CairoKnob> lowKnob;
     ScopedPointer<CairoKnob> midfreqKnob;
     ScopedPointer<CairoKnob> middleKnob;
-    ScopedPointer<CairoSwitch> bypassSwitch;
+    ScopedPointer<CairoPushButton> bypassSwitch;
     ScopedPointer<CairoLed> bypassLed;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(UIMetalTone)
 };
