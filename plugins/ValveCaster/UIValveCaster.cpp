@@ -48,7 +48,7 @@ UIValveCaster::UIValveCaster()
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
-                dynamic_cast<UI*>(this), "ValveCaster", PluginValveCaster::BYPASS);
+                dynamic_cast<UI*>(this), "ValveCaster", PluginValveCaster::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
@@ -68,7 +68,7 @@ UIValveCaster::~UIValveCaster() {
 void UIValveCaster::parameterChanged(uint32_t index, float value) {
     // fprintf(stderr, "index %i, value %f\n", index, value);
     switch (index) {
-         case PluginValveCaster::BYPASS:
+         case PluginValveCaster::dpf_bypass:
             bypassSwitch->setValue(value);
             bypassLed->setValue(value);
             break;

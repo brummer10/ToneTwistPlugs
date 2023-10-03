@@ -42,7 +42,7 @@ public:
         DRIVE, 
         LEVEL, 
         V1, 
-        BYPASS,
+        dpf_bypass,
         paramCount
     };
 

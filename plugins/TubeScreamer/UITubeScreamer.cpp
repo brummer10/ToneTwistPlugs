@@ -43,7 +43,7 @@ UITubeScreamer::UITubeScreamer()
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
-                dynamic_cast<UI*>(this), "TubeScreamer", PluginTubeScreamer::BYPASS);
+                dynamic_cast<UI*>(this), "TubeScreamer", PluginTubeScreamer::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
@@ -63,7 +63,7 @@ UITubeScreamer::~UITubeScreamer() {
 void UITubeScreamer::parameterChanged(uint32_t index, float value) {
     // fprintf(stderr, "index %i, value %f\n", index, value);
     switch (index) {
-         case PluginTubeScreamer::BYPASS:
+         case PluginTubeScreamer::dpf_bypass:
             bypassSwitch->setValue(value);
             bypassLed->setValue(value);
             break;

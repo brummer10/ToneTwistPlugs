@@ -54,7 +54,7 @@ UICollisionDrive::UICollisionDrive()
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
-                dynamic_cast<UI*>(this), "CollisionDrive", PluginCollisionDrive::BYPASS);
+                dynamic_cast<UI*>(this), "CollisionDrive", PluginCollisionDrive::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
@@ -92,7 +92,7 @@ void UICollisionDrive::parameterChanged(uint32_t index, float value) {
         case PluginCollisionDrive::V1:
              gateKnob->setIndicator(value);
             break;
-         case PluginCollisionDrive::BYPASS:
+         case PluginCollisionDrive::dpf_bypass:
             bypassSwitch->setValue(value);
             bypassLed->setValue(value);
             break;

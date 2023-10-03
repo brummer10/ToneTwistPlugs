@@ -36,7 +36,7 @@ START_NAMESPACE_DISTRHO
 class PluginTubeScreamer : public Plugin {
 public:
     enum Parameters {
-        BYPASS = 0,
+        dpf_bypass = 0,
         LEVEL,
         TONE,
         DRIVE,

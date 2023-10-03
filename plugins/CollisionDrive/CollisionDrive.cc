@@ -207,7 +207,7 @@ void Dsp::connect(uint32_t port, float data)
 {
 	switch (port)
 	{
-	case PluginCollisionDrive::BYPASS: 
+	case PluginCollisionDrive::dpf_bypass: 
 		fCheck0 = data; // , 0, 0.0, 1.0, 0 
 		break;
 	case PluginCollisionDrive::BRIGHT: 

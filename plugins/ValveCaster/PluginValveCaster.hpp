@@ -46,7 +46,7 @@ START_NAMESPACE_DISTRHO
 class PluginValveCaster : public Plugin {
 public:
     enum Parameters {
-        BYPASS = 0,
+        dpf_bypass = 0,
         GAIN,
         TONE,
         VOLUME,

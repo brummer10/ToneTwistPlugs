@@ -47,7 +47,7 @@ public:
     enum Parameters {
         INTENSITY = 0, 
         LEVEL, 
-        BYPASS,
+        dpf_bypass,
         paramCount
     };
 

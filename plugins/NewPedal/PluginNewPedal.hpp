@@ -45,7 +45,7 @@ START_NAMESPACE_DISTRHO
 class PluginNewPedal : public Plugin {
 public:
     enum Parameters {
-        BYPASS = 0,
+        dpf_bypass = 0,
         paramCount
     };
 

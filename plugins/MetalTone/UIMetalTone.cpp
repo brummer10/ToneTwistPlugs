@@ -56,7 +56,7 @@ UIMetalTone::UIMetalTone()
     sizeGroup->addToSizeGroup(bypassLed, 132, 20, 20, 20);
 
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
-                dynamic_cast<UI*>(this), "MetalTone", PluginMetalTone::BYPASS);
+                dynamic_cast<UI*>(this), "MetalTone", PluginMetalTone::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
 
     setGeometryConstraints(kInitialWidth, kInitialHeight, true);
@@ -94,7 +94,7 @@ void UIMetalTone::parameterChanged(uint32_t index, float value) {
         case PluginMetalTone::MIDDLE:
             middleKnob->setValue(value);
             break;
-         case PluginMetalTone::BYPASS:
+         case PluginMetalTone::dpf_bypass:
             bypassSwitch->setValue(value);
             bypassLed->setValue(value);
             break;

@@ -53,7 +53,7 @@ public:
         LOWS, 
         MIDFREQ, 
         MIDDLE,
-        BYPASS,
+        dpf_bypass,
         paramCount
     };
 
