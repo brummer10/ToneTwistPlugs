@@ -145,14 +145,14 @@ protected:
 
         cairo_arc(cr,knobx1, knoby1, knob_x/2.1, 0, 2 * M_PI );
         theme.knobShadowOutset(cr, width, height);
-        cairo_stroke (cr);
+        cairo_stroke_preserve (cr);
         cairo_new_path (cr);
 
         cairo_arc(cr,knobx1, knoby1, knob_x/2.4, 0, 2 * M_PI );
         theme.knobShadowOutset(cr, width, height);
         cairo_set_line_width(cr,knobx1/10);
         theme.setCairoColour(cr, theme.idColourBoxShadow);
-        cairo_stroke (cr);
+        cairo_stroke_preserve (cr);
         cairo_new_path (cr);
 
         cairo_arc(cr,knobx1, knoby1, knob_x/3.1, 0, 2 * M_PI );
@@ -176,7 +176,7 @@ protected:
         cairo_line_to(cr,lengh_x,lengh_y);
         cairo_set_line_width(cr,knobx1/10);
         theme.setCairoColour(cr, theme.idColourForground);
-        cairo_stroke(cr);
+        cairo_stroke_preserve(cr);
         cairo_new_path (cr);
 
         /** create a indicator ring around the knob **/

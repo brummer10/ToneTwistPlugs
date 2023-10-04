@@ -4,8 +4,6 @@
 #include <cmath>
 #include <algorithm>
 
-#define FAUSTFLOAT float
-
 using std::signbit;
 
 #include "ValveCaster.hpp"

@@ -74,6 +74,25 @@ protected:
         cairo_close_path(cr);
     }
 
+    void switchLight(cairo_t *cr, int x, int y, int w)
+    {
+        cairo_pattern_t *pat = cairo_pattern_create_linear (x, y, x + w, y);
+        cairo_pattern_add_color_stop_rgba
+            (pat, 1, theme.idColourBackgroundActive.r, theme.idColourBackgroundActive.g,
+             theme.idColourBackgroundActive.b, theme.idColourBackgroundActive.a * 0.8);
+        cairo_pattern_add_color_stop_rgba
+            (pat, 0.5, theme.idColourBackgroundActive.r, theme.idColourBackgroundActive.g,
+             theme.idColourBackgroundActive.b, theme.idColourBackgroundActive.a * 0.4);
+        cairo_pattern_add_color_stop_rgba
+            (pat, 0, theme.idColourBackgroundActive.r, theme.idColourBackgroundActive.g,
+             theme.idColourBackgroundActive.b, theme.idColourBackgroundActive.a * 0.2);
+        cairo_pattern_set_extend(pat, CAIRO_EXTEND_NONE);
+        cairo_set_source(cr, pat);
+        cairo_fill_preserve (cr);
+        cairo_pattern_destroy (pat);
+
+    }
+
     void onCairoDisplay(const CairoGraphicsContext& context) override
     {
         cairo_t* const cr = context.handle;
@@ -95,8 +114,9 @@ protected:
         theme.setCairoColour(cr, theme.idColourBoxShadow);
         cairo_fill_preserve(cr);
         if (state) {
-            theme.setCairoColourWithAlpha(cr, theme.idColourBackgroundActive, 0.6f);
-            cairo_fill_preserve(cr);
+            //theme.setCairoColourWithAlpha(cr, theme.idColourBackgroundActive, 0.6f);
+            //cairo_fill_preserve(cr);
+            switchLight(cr, offset, offset, w - (offset * 2));
         }
         theme.setCairoColour(cr, theme.idColourBoxShadow);
         cairo_set_line_width(cr,1);

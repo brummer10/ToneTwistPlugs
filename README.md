@@ -87,6 +87,21 @@ Features:
 Modeled by Brummer 
 Based on the ValveCaster by Matsumin
 
+## BoobTube
+
+![BoobTube](https://github.com/brummer10/ToneTwistPlugs/blob/main/BoobTube.png?raw=true)
+
+The BoobTube is a more versatile variation of the ValveCaster, 
+a famous DIY guitar pedal schematic first put together in 2007 by Matsumin. 
+
+The BoobTube offers a warm, harmonically rich range of tones, 
+from bright fuzzes to darker distortions, without actually colouring the sound. 
+The DIY project quickly became popular amongst sound enthusiasts searching for that tube-y goodness.
+
+Features: 
+Modeled by Brummer 
+Based on the BoobTube by Matsumin
+
 ## Formats
 
 ToneTwist Plugs come in the following plug-in formats:

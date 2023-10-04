@@ -12,6 +12,9 @@
 #define CAIROPUSHBUTTON_H
 
 #include <functional>
+#include <atomic>
+
+#include "extra/Runner.hpp"
 
 #include "CairoColourTheme.hpp"
 #include "CairoLed.hpp"
@@ -20,7 +23,7 @@ START_NAMESPACE_DGL
 
 // -----------------------------------------------------------------------
 
-class CairoPushButton : public CairoSubWidget
+class CairoPushButton : public CairoSubWidget, public Runner
 {
 public:
 
@@ -66,12 +69,26 @@ protected:
         state = 0;
         fontSize = getFontSize();
         prelight = false;
+        setState.store(false, std::memory_order_release);
     }
 
     uint getFontSize()
     {
         size_t s = strlen(label);
         return (s * 0.7);
+    }
+
+    bool run() override
+    {
+        if (setState.load(std::memory_order_acquire)) {
+            setState.store(false, std::memory_order_release);
+            state = 0;
+            repaint();
+            return false;
+        } else {
+            setState.store(true, std::memory_order_release);
+            return true;
+        }
     }
 
     void onCairoDisplay(const CairoGraphicsContext& context) override
@@ -143,6 +160,23 @@ protected:
         return CairoSubWidget::onMouse(event);
     }
 
+    bool onScroll(const ScrollEvent& event) override
+    {
+        if (!contains(event.pos))
+            return CairoSubWidget::onScroll(event);
+
+        const float set_value = (event.delta.getY() > 0.f) ? 1.f : 0.f;
+        if (set_value != value) {
+            state = 1;
+            setValue(set_value);
+            led->setValue(value);
+            setParameterValue(port, value);
+            if (!isRunnerActive()) startRunner(250);
+        }
+
+        return CairoSubWidget::onScroll(event);
+    }
+
     bool onMotion(const MotionEvent& event) override
     {
         if (contains(event.pos)) // enter
@@ -174,6 +208,7 @@ private:
     const char* label;
     const uint32_t port;
     uint fontSize;
+    std::atomic<bool> setState;
     DISTRHO_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(CairoPushButton)
 };
 

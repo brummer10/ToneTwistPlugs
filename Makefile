@@ -92,6 +92,7 @@ plugins: libs
 	$(MAKE) all -C plugins/Rumor
 	$(MAKE) all -C plugins/TubeScreamer
 	$(MAKE) all -C plugins/ValveCaster
+	$(MAKE) all -C plugins/BoobTube
 
 ifneq ($(CROSS_COMPILING),true)
 gen: plugins dpf/utils/lv2_ttl_generator
@@ -117,6 +118,7 @@ clean:
 	$(MAKE) clean -C plugins/Rumor
 	$(MAKE) clean -C plugins/TubeScreamer
 	$(MAKE) clean -C plugins/ValveCaster
+	$(MAKE) clean -C plugins/BoobTube
 	rm -rf bin build
 
 install: all
@@ -125,6 +127,7 @@ install: all
 	$(MAKE) install -C plugins/Rumor
 	$(MAKE) install -C plugins/TubeScreamer
 	$(MAKE) install -C plugins/ValveCaster
+	$(MAKE) install -C plugins/BoobTube
 
 install-user: all
 	$(MAKE) install-user -C plugins/MetalTone
@@ -132,6 +135,7 @@ install-user: all
 	$(MAKE) install-user -C plugins/Rumor
 	$(MAKE) install-user -C plugins/TubeScreamer
 	$(MAKE) install-user -C plugins/ValveCaster
+	$(MAKE) install-user -C plugins/BoobTube
 
 # --------------------------------------------------------------
 
