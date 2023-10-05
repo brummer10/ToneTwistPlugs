@@ -15,7 +15,7 @@ START_NAMESPACE_DISTRHO
 // Init / Deinit
 
 UIBoobTube::UIBoobTube()
-: UI(285, 400, true), theme() {
+: UI(285, 400), theme() {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
