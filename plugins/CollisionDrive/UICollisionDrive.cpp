@@ -26,7 +26,7 @@ UICollisionDrive::UICollisionDrive()
     theme.setIdColour(theme.idColourBackground, 0.12, 0.13, 0.16, 1.0);
 
     brightKnob = new CairoKnob(this, theme, &blocked,
-                dynamic_cast<UI*>(this), "Bright", PluginCollisionDrive::BRIGHT);
+                dynamic_cast<UI*>(this), "Bright", PluginCollisionDrive::BRIGHT, true);
     brightKnob->setAdjustment(0.0, 0.0, 1.0, 0.01);
     sizeGroup->addToSizeGroup(brightKnob, 155, 30, 60, 80);
 

@@ -52,9 +52,9 @@ void PluginNewPedal::initParameter(uint32_t index, Parameter& parameter) {
             parameter.symbol = "dpf_bypass";
             parameter.ranges.min = 0.0f;
             parameter.ranges.max = 1.0f;
-            parameter.ranges.def = 1.0f;
+            parameter.ranges.def = 0.0f;
             parameter.designation = kParameterDesignationBypass;
-            parameter.hints = kParameterIsAutomatable|kParameterIsBoolean;
+            parameter.hints = kParameterIsAutomatable|kParameterIsBoolean|kParameterIsInteger;
             break;
     }
 }
@@ -128,7 +128,7 @@ void PluginNewPedal::run(const float** inputs, float** outputs,
     // check if bypass is pressed
     if (bypass_ != static_cast<uint32_t>(fParams[dpf_bypass])) {
         bypass_ = static_cast<uint32_t>(fParams[dpf_bypass]);
-        if (!bypass_) {
+        if (bypass_) {
             needs_ramp_down = true;
             needs_ramp_up = false;
         } else {

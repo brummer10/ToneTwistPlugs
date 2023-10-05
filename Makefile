@@ -83,7 +83,11 @@ all: libs plugins gen
 submodules:
 	git submodule update --init --recursive
 
-libs:
+pugl_patch.flag:
+	cd dpf/dgl/src/pugl-upstream/ && git apply ../../../../pugl.patch
+	touch pugl_patch.flag
+
+libs: pugl_patch.flag
 	$(MAKE) -C dpf/dgl ../build/libdgl-cairo.a
 
 plugins: libs
@@ -119,6 +123,8 @@ clean:
 	$(MAKE) clean -C plugins/TubeScreamer
 	$(MAKE) clean -C plugins/ValveCaster
 	$(MAKE) clean -C plugins/BoobTube
+	cd dpf/dgl/src/pugl-upstream/ && git apply -R ../../../../pugl.patch
+	rm -f pugl_patch.flag
 	rm -rf bin build
 
 install: all

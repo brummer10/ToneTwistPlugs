@@ -61,7 +61,7 @@ protected:
         cairo_push_group (cr);
         cairo_arc(cr,w * 0.5, h * 0.5, r, 0, 2 * M_PI );
 
-        if (state) {
+        if (!state) {
             cairo_pattern_t* pat = cairo_pattern_create_radial (w * 0.5, h * 0.5,
                                                 1, w * 0.5, h * 0.5, r);
             cairo_pattern_add_color_stop_rgba (pat, 0,  0.83, 0.1, 0.1, 1.0);

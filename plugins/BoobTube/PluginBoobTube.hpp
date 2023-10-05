@@ -102,7 +102,7 @@ Based on the BoobTube by Matsumin)" ;
     //
     // Get a proper plugin UID and fill it in here!
     int64_t getUniqueId() const noexcept override {
-        return d_cconst('a', 'b', 'c', 'd');
+        return d_cconst('b', 'o', 'o', 'b');
     }
 
     // -------------------------------------------------------------------

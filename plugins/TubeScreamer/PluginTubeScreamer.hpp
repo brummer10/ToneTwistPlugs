@@ -90,7 +90,7 @@ All other trademarks are the property of their respective holders.'
     //
     // Get a proper plugin UID and fill it in here!
     int64_t getUniqueId() const noexcept override {
-        return d_cconst('a', 'b', 'c', 'd');
+        return d_cconst('t', 'u', 's', 'c');
     }
 
     // -------------------------------------------------------------------
