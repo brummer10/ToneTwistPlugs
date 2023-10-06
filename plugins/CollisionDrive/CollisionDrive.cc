@@ -160,7 +160,7 @@ inline void Dsp::compute(int count, float *input0, float *output0)
 		fRec3[0] = (iTemp0 ? std::max<double>(fRec3[1], fTemp6) : fTemp6);
 		iRec4[0] = (iTemp0 ? (iRec4[1] + 1) : 1);
 		fRec5[0] = (iTemp0 ? fRec5[1] : fRec3[1]);
-		fVbargraph0 = fCheck0 ? float(fRec5[0]) : 1.0;
+		fVbargraph0 = fCheck0 ? 1.0 : float(fRec5[0]);
 		fRec2[0] = (fTemp5 - (fConst2 * ((fConst17 * fRec2[1]) + (fConst18 * fRec2[2]))));
 		double fTemp7 = (((fConst4 * fRec2[1]) + (fConst19 * fRec2[0])) + (fConst19 * fRec2[2]));
 		fVec1[0] = fTemp7;

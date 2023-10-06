@@ -15,7 +15,7 @@ START_NAMESPACE_DISTRHO
 // Init / Deinit
 
 UIBoobTube::UIBoobTube()
-: UI(285, 400), theme() {
+: UI(285, 400), theme(), fResizeHandle(this) {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
@@ -50,6 +50,9 @@ UIBoobTube::UIBoobTube()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "BoobTube ", PluginBoobTube::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
+    
+    setGeometryConstraints(143, 200);
+    if (isResizable()) fResizeHandle.hide();
 }
 
 UIBoobTube::~UIBoobTube() {
@@ -121,6 +124,7 @@ void UIBoobTube::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_t* const cr = context.handle;
     const int width = getWidth();
     const int height = getHeight();
+    const float scale = sizeGroup->getScaleFactor();
     const float scaleH = sizeGroup->getScaleHFactor();
     const float scaleW = sizeGroup->getScaleWFactor();
 
@@ -130,7 +134,12 @@ void UIBoobTube::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_paint(cr);
     theme.boxShadow(cr, width, height, 25, 25);
 
-    cairo_rectangle(cr, 25 * scaleW, 215 * scaleH, width - (50 * scaleW), height - (240 * scaleH));
+    const int x = (142  * scaleW) - (117 * scale);
+    const int y = (295  * scaleH) - (80 * scale);
+    const int w = 234 * scale;
+    const int h = 160 * scale;
+
+    cairo_rectangle(cr, x, y, w, h);
     theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
     cairo_fill(cr);
 

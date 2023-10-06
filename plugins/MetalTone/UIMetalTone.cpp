@@ -15,7 +15,7 @@ START_NAMESPACE_DISTRHO
 // Init / Deinit
 
 UIMetalTone::UIMetalTone()
-: UI(285, 400), theme() {
+: UI(285, 400), theme(), fResizeHandle(this) {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
@@ -58,6 +58,9 @@ UIMetalTone::UIMetalTone()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "MetalTone", PluginMetalTone::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
+    
+    setGeometryConstraints(143, 200);
+    if (isResizable()) fResizeHandle.hide();
 }
 
 UIMetalTone::~UIMetalTone() {

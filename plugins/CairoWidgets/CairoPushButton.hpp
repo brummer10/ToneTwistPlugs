@@ -165,7 +165,7 @@ protected:
         if (!contains(event.pos))
             return CairoSubWidget::onScroll(event);
 
-        const float set_value = (event.delta.getY() > 0.f) ? 1.f : 0.f;
+        const float set_value = (event.delta.getY() > 0.f) ? 0.f : 1.f;
         if (set_value != value) {
             state = 1;
             setValue(set_value);

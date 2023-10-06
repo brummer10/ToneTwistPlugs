@@ -41,8 +41,8 @@ public:
         ATTACK, 
         DRIVE, 
         LEVEL, 
-        V1, 
         dpf_bypass,
+        V1, 
         paramCount
     };
 

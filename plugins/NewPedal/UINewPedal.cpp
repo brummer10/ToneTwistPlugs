@@ -15,7 +15,7 @@ START_NAMESPACE_DISTRHO
 // Init / Deinit
 
 UINewPedal::UINewPedal()
-: UI(285, 400), theme() {
+: UI(285, 400), theme(), fResizeHandle(this) {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
@@ -27,6 +27,9 @@ UINewPedal::UINewPedal()
     bypassSwitch = new CairoPushButton(this, theme, &blocked, bypassLed,
                 dynamic_cast<UI*>(this), "NewPedal", PluginNewPedal::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
+    
+    setGeometryConstraints(143, 200);
+    if (isResizable()) fResizeHandle.hide();
 }
 
 UINewPedal::~UINewPedal() {
