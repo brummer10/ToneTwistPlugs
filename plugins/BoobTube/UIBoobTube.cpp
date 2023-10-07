@@ -15,7 +15,7 @@ START_NAMESPACE_DISTRHO
 // Init / Deinit
 
 UIBoobTube::UIBoobTube()
-: UI(285, 400), theme(), fResizeHandle(this) {
+: UI(285, 400, true), theme(), fResizeHandle(this) {
     kInitialHeight = 400;
     kInitialWidth = 285;
     blocked = false;
@@ -51,7 +51,6 @@ UIBoobTube::UIBoobTube()
                 dynamic_cast<UI*>(this), "BoobTube ", PluginBoobTube::dpf_bypass);
     sizeGroup->addToSizeGroup(bypassSwitch, 30, 220, 225, 150);
     
-    setGeometryConstraints(143, 200);
     if (isResizable()) fResizeHandle.hide();
 }
 
