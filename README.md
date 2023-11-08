@@ -182,7 +182,7 @@ variables differ depending on the target OS.*
 
 * [pkgconf]
 
-The [LV2] and [VST2] (vestige) headers are included in the
+The [LV2], [VST2] (Xaymar/vst2sdk) and [VST3] (travesty) headers are included in the
 [DPF] framework, which is integrated as a Git sub-module. These need not be
 installed separately to build the software in the respective plug-in formats.
 
