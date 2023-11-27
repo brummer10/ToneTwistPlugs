@@ -1,0 +1,125 @@
+diff --git a/src/win_cairo.c b/src/win_cairo.c
+index 0aab254..bdd0a2e 100644
+--- a/src/win_cairo.c
++++ b/src/win_cairo.c
+@@ -13,42 +13,10 @@
+ #include <stdlib.h>
+ 
+ typedef struct {
+-  cairo_surface_t* surface;
+   cairo_t*         cr;
+-  HDC              drawDc;
+-  HBITMAP          drawBitmap;
++  cairo_surface_t* image_surface;
+ } PuglWinCairoSurface;
+ 
+-static PuglStatus
+-puglWinCairoCreateDrawContext(PuglView* view)
+-{
+-  PuglInternals* const       impl    = view->impl;
+-  PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+-
+-  surface->drawDc     = CreateCompatibleDC(impl->hdc);
+-  surface->drawBitmap = CreateCompatibleBitmap(
+-    impl->hdc, (int)view->lastConfigure.width, (int)view->lastConfigure.height);
+-
+-  DeleteObject(SelectObject(surface->drawDc, surface->drawBitmap));
+-
+-  return PUGL_SUCCESS;
+-}
+-
+-static PuglStatus
+-puglWinCairoDestroyDrawContext(PuglView* view)
+-{
+-  PuglInternals* const       impl    = view->impl;
+-  PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+-
+-  DeleteDC(surface->drawDc);
+-  DeleteObject(surface->drawBitmap);
+-
+-  surface->drawDc     = NULL;
+-  surface->drawBitmap = NULL;
+-
+-  return PUGL_SUCCESS;
+-}
+-
+ static PuglStatus
+ puglWinCairoConfigure(PuglView* view)
+ {
+@@ -67,10 +35,10 @@ puglWinCairoClose(PuglView* view)
+ {
+   PuglInternals* const       impl    = view->impl;
+   PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+-
+-  cairo_surface_destroy(surface->surface);
+-
+-  surface->surface = NULL;
++  cairo_destroy (surface->cr);
++  cairo_surface_destroy(surface->image_surface);
++  surface->cr = NULL;
++  surface->image_surface = NULL;
+ }
+ 
+ static PuglStatus
+@@ -79,9 +47,10 @@ puglWinCairoOpen(PuglView* view)
+   PuglInternals* const       impl    = view->impl;
+   PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+ 
+-  if (!(surface->surface = cairo_win32_surface_create(surface->drawDc)) ||
+-      cairo_surface_status(surface->surface) ||
+-      !(surface->cr = cairo_create(surface->surface)) ||
++  if (!(surface->image_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
++                    (int)view->lastConfigure.width, (int)view->lastConfigure.height)) ||
++      cairo_surface_status(surface->image_surface) ||
++      !(surface->cr = cairo_create(surface->image_surface)) ||
+       cairo_status(surface->cr)) {
+     return PUGL_CREATE_CONTEXT_FAILED;
+   }
+@@ -96,7 +65,6 @@ puglWinCairoDestroy(PuglView* view)
+   PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+ 
+   puglWinCairoClose(view);
+-  puglWinCairoDestroyDrawContext(view);
+   free(surface);
+   impl->surface = NULL;
+ }
+@@ -106,9 +74,8 @@ puglWinCairoEnter(PuglView* view, const PuglExposeEvent* expose)
+ {
+   PuglStatus st = PUGL_SUCCESS;
+ 
+-  if (expose && !(st = puglWinCairoCreateDrawContext(view)) &&
+-      !(st = puglWinCairoOpen(view))) {
+-    st = puglWinEnter(view, expose);
++  if (expose) {
++      st = puglWinCairoOpen(view);
+   }
+ 
+   return st;
+@@ -121,19 +88,14 @@ puglWinCairoLeave(PuglView* view, const PuglExposeEvent* expose)
+   PuglWinCairoSurface* const surface = (PuglWinCairoSurface*)impl->surface;
+ 
+   if (expose) {
+-    cairo_surface_flush(surface->surface);
+-    BitBlt(impl->hdc,
+-           0,
+-           0,
+-           (int)view->lastConfigure.width,
+-           (int)view->lastConfigure.height,
+-           surface->drawDc,
+-           0,
+-           0,
+-           SRCCOPY);
+-
+-    puglWinCairoClose(view);
+-    puglWinCairoDestroyDrawContext(view);
++      HDC hdc = BeginPaint(impl->hwnd, &impl->paint);
++      cairo_surface_t* win_surface = cairo_win32_surface_create(hdc);
++      cairo_t* cri = cairo_create(win_surface);
++      cairo_set_source_surface(cri, surface->image_surface, 0.0, 0.0);
++      cairo_paint(cri);
++      cairo_destroy(cri);
++      cairo_surface_destroy(win_surface);
++      puglWinCairoClose(view);
+   }
+ 
+   return puglWinLeave(view, expose);
