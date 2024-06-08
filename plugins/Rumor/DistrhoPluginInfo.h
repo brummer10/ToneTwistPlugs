@@ -32,4 +32,8 @@
 #define DISTRHO_PLUGIN_VST3_CATEGORIES "Fx|distortion|Mono"
 #define DISTRHO_PLUGIN_CLAP_FEATURES "audio-effect", "distortion", "mono"
 
+#define DPF_VST3_DONT_USE_BRAND_ID     1
+#define DISTRHO_PLUGIN_BRAND_ID BrTw
+#define DISTRHO_PLUGIN_UNIQUE_ID bRUm
+
 #endif // DISTRHO_PLUGIN_INFO_H
