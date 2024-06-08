@@ -30,6 +30,19 @@ public:
         double a;
     };
 
+    typedef struct  {
+        const unsigned char * data;
+        long int position;
+    } binary_stream;
+
+    cairo_surface_t *cairo_image_surface_create_from_stream ( const unsigned char* name)
+    {
+        binary_stream png_stream;
+        png_stream.data = name;
+        png_stream.position = 0;
+        return cairo_image_surface_create_from_png_stream(&png_stream_reader, (void *)&png_stream);
+    }
+
     void setCairoColour(cairo_t* const cr, const CairoColour idColour, float darker = 0.8f)
     {
         cairo_set_source_rgba(cr, idColour.r * darker, idColour.g * darker,
@@ -213,6 +226,14 @@ public:
     CairoColour idColourBoxLight;
 
 protected:
+
+    static cairo_status_t png_stream_reader (void *_stream, unsigned char *data, unsigned int length)
+    {
+        binary_stream * stream = (binary_stream *) _stream;
+        memcpy(data, &stream->data[stream->position],length);
+        stream->position += length;
+        return CAIRO_STATUS_SUCCESS;
+    }
 
     void init()
     {

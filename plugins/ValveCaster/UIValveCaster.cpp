@@ -8,6 +8,7 @@
 
 #include "UIValveCaster.hpp"
 #include "Window.hpp"
+#include "krakel2.c"
 
 START_NAMESPACE_DISTRHO
 
@@ -24,6 +25,7 @@ UIValveCaster::UIValveCaster()
     theme.setIdColour(theme.idColourForgroundPrelight, 0.933, 0.82, 0.8, 1.0);
     theme.setIdColour(theme.idColourBackgroundActive, 0.667, 0.149, 0.008, 1.0);
     theme.setIdColour(theme.idColourBackground, 0.616, 0.486, 0.353, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (krakel2_png);
 
     gainKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Gain", PluginValveCaster::GAIN);
@@ -55,7 +57,7 @@ UIValveCaster::UIValveCaster()
 }
 
 UIValveCaster::~UIValveCaster() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -131,6 +133,13 @@ void UIValveCaster::onCairoDisplay(const CairoGraphicsContext& context) {
 
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     const int x = (142  * scaleW) - (117 * scale);
@@ -139,7 +148,7 @@ void UIValveCaster::onCairoDisplay(const CairoGraphicsContext& context) {
     const int h = 160 * scale;
 
     cairo_rectangle(cr, x, y, w, h);
-    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
+    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 0.5f);
     cairo_fill(cr);
 
     cairo_pop_group_to_source (cr);

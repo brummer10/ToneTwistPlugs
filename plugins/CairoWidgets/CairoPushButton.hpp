@@ -18,6 +18,7 @@
 
 #include "CairoColourTheme.hpp"
 #include "CairoLed.hpp"
+#include "scratch.c"
 
 START_NAMESPACE_DGL
 
@@ -55,6 +56,10 @@ public:
             init();
           }
 
+    ~CairoPushButton() {
+        cairo_surface_destroy(texture);
+    }
+
     void setValue(float v)
     {
         value = v;
@@ -68,6 +73,7 @@ protected:
         value = 0.0f;
         state = 0;
         fontSize = getFontSize();
+        texture = theme.cairo_image_surface_create_from_stream (scratch_png);
         prelight = false;
         setState.store(false, std::memory_order_release);
     }
@@ -113,15 +119,30 @@ protected:
             cairo_set_line_width(cr,2);
             theme.setCairoColour(cr, theme.idColourBackgroundNormal);
             cairo_stroke(cr);
+
+            cairo_rectangle(cr, 2, 2, w -4, h -4);
+            cairo_translate (cr, 2,2);
+            cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+            cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+            cairo_set_source(cr, pat);
+            cairo_fill (cr);
+            cairo_translate (cr, -2,-2);
+
             cairo_set_line_width(cr,1);
             cairo_move_to(cr, 1,h);
             cairo_line_to(cr, 1, 1);
             cairo_line_to(cr, w-2, 1);
             theme.setCairoColour(cr, theme.idColourBoxShadow);
             cairo_stroke(cr);
-        }
-        else
+            cairo_pattern_destroy (pat);
+        } else {
             theme.boxShadow(cr, w, h, 5, 5);
+            cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+            cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+            cairo_set_source(cr, pat);
+            cairo_paint (cr);
+            cairo_pattern_destroy (pat);
+        }
 
         int offset = 0;
         cairo_text_extents_t extents;
@@ -133,8 +154,21 @@ protected:
                                    CAIRO_FONT_WEIGHT_BOLD);
         cairo_text_extents(cr, label , &extents);
 
-        theme.setCairoColour(cr, theme.idColourForgroundNormal);
-        cairo_move_to (cr, (w-extents.width)*0.5 +offset, (h+extents.height)*0.75 +offset);
+        cairo_move_to (cr, (w-extents.width)*0.5 +offset-1, (h+extents.height)*0.72 +offset-1);
+        cairo_text_path(cr, label);
+        cairo_set_line_width(cr, 1);
+        cairo_set_source_rgba(cr, 0.1, 0.1, 0.1, 1);
+        cairo_stroke (cr);
+
+        cairo_move_to (cr, (w-extents.width)*0.5 +offset+1, (h+extents.height)*0.72 +offset+1);
+        cairo_text_path(cr, label);
+        cairo_set_line_width(cr, 1);
+        cairo_set_source_rgba(cr, 0.33, 0.33, 0.33, 1);
+        cairo_stroke (cr);
+
+        //theme.setCairoColour(cr, theme.idColourForgroundNormal);
+        cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 1);
+        cairo_move_to (cr, (w-extents.width)*0.5 +offset, (h+extents.height)*0.72 +offset);
         cairo_show_text(cr, label);
 
         cairo_pop_group_to_source (cr);
@@ -199,6 +233,7 @@ protected:
 
 private:
     CairoColourTheme &theme;
+    cairo_surface_t *texture;
     bool *blocked;
     ScopedPointer<CairoLed>& led;
     std::function<void(const uint32_t, float) > setParameterValue;

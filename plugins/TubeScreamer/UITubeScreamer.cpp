@@ -8,6 +8,7 @@
 
 #include "UITubeScreamer.hpp"
 #include "Window.hpp"
+#include "krakel2.c"
 
 START_NAMESPACE_DISTRHO
 
@@ -20,9 +21,10 @@ UITubeScreamer::UITubeScreamer()
     kInitialWidth = 285;
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
-    theme.setIdColour(theme.idColourForgroundNormal, 0.0, 0.271, 0.212, 1.0);
+    theme.setIdColour(theme.idColourForgroundNormal, 0.622, 0.671, 0.612, 1.0);
     theme.setIdColour(theme.idColourBackgroundActive, 0.204, 0.922, 0.278, 1.0);
-    theme.setIdColour(theme.idColourBackground, 0.008, 0.643, 0.467, 1.0);
+    theme.setIdColour(theme.idColourBackground, 0.031, 0.675, 0.486, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (krakel2_png);
 
     levelKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Level", PluginTubeScreamer::LEVEL);
@@ -50,7 +52,7 @@ UITubeScreamer::UITubeScreamer()
 }
 
 UITubeScreamer::~UITubeScreamer() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -122,10 +124,17 @@ void UITubeScreamer::onCairoDisplay(const CairoGraphicsContext& context) {
 
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     cairo_rectangle(cr, 25 * scaleW, 215 * scaleH, width - (50 * scaleW), height - (240 * scaleH));
-    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
+    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 0.5f);
     cairo_fill(cr);
 
     cairo_pop_group_to_source (cr);

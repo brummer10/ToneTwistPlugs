@@ -8,6 +8,8 @@
 
 #include "UIBoobTube.hpp"
 #include "Window.hpp"
+#include "leder2.c"
+
 
 START_NAMESPACE_DISTRHO
 
@@ -20,10 +22,11 @@ UIBoobTube::UIBoobTube()
     kInitialWidth = 285;
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
-    theme.setIdColour(theme.idColourForgroundNormal, 0.141, 0.098, 0.126, 1.0);
+    theme.setIdColour(theme.idColourForgroundNormal, 0.641, 0.698, 0.626, 1.0);
     theme.setIdColour(theme.idColourForgroundPrelight, 0.933, 0.82, 0.8, 1.0);
     theme.setIdColour(theme.idColourBackgroundActive, 0.667, 0.149, 0.008, 1.0);
     theme.setIdColour(theme.idColourBackground, 0.321, 0.255, 0.255, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (leder2_png);
 
     gainKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Gain", PluginBoobTube::GAIN);
@@ -55,7 +58,7 @@ UIBoobTube::UIBoobTube()
 }
 
 UIBoobTube::~UIBoobTube() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -131,6 +134,13 @@ void UIBoobTube::onCairoDisplay(const CairoGraphicsContext& context) {
 
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     const int x = (142  * scaleW) - (117 * scale);
@@ -139,7 +149,7 @@ void UIBoobTube::onCairoDisplay(const CairoGraphicsContext& context) {
     const int h = 160 * scale;
 
     cairo_rectangle(cr, x, y, w, h);
-    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 1.0f);
+    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 0.5f);
     cairo_fill(cr);
 
     cairo_pop_group_to_source (cr);

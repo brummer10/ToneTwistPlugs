@@ -8,6 +8,7 @@
 
 #include "UIRumor.hpp"
 #include "Window.hpp"
+#include "krakel.c"
 
 START_NAMESPACE_DISTRHO
 
@@ -21,6 +22,7 @@ UIRumor::UIRumor()
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
     theme.setIdColour(theme.idColourForgroundNormal, 0.47, 0.1, 0.1, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (krakel_png);
 
     levelKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Level", PluginRumor::LEVEL);
@@ -43,7 +45,7 @@ UIRumor::UIRumor()
 }
 
 UIRumor::~UIRumor() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -112,6 +114,13 @@ void UIRumor::onCairoDisplay(const CairoGraphicsContext& context) {
 
     theme.setCairoColour(cr, theme.idColourForground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     cairo_rectangle(cr, 25 * scaleW, 25 * scaleH, width - (50 * scaleW), height - (50 * scaleH));
@@ -120,7 +129,7 @@ void UIRumor::onCairoDisplay(const CairoGraphicsContext& context) {
     theme.setCairoColour(cr, theme.idColourBoxShadow);
     cairo_set_line_width(cr,8);
     cairo_stroke_preserve(cr);
-    theme.setCairoColour(cr, theme.idColourForground, 1.0f);
+    theme.setCairoColour(cr, theme.idColourForground, 0.5f);
     cairo_set_line_width(cr,1);
     cairo_stroke(cr);
 

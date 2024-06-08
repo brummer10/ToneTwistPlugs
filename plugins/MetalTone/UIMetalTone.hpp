@@ -43,6 +43,7 @@ protected:
 
 private:
     CairoColourTheme theme;
+    cairo_surface_t *texture;
     int kInitialHeight;
     int kInitialWidth;
     bool blocked;

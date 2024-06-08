@@ -40,6 +40,7 @@ LV2_DIR ?= /Library/Audio/Plug-Ins/LV2
 VST2_DIR ?= /Library/Audio/Plug-Ins/VST
 VST3_DIR ?= /Library/Audio/Plug-Ins/VST3
 CLAP_DIR ?= /Library/Audio/Plug-Ins/CLAP
+AU_DIR ?= /Library/Audio/Plug-Ins/Components
 endif
 ifeq ($(WINDOWS),true)
 LV2_DIR ?= $(COMMONPROGRAMFILES)/LV2
@@ -61,6 +62,7 @@ USER_LV2_DIR ?= $(HOME)/Library/Audio/Plug-Ins/LV2
 USER_VST2_DIR ?= $(HOME)/Library/Audio/Plug-Ins/VST
 USER_VST3_DIR ?= $(HOME)/Library/Audio/Plug-Ins/VST3
 USER_CLAP_DIR ?= $(HOME)/Library/Audio/Plug-Ins/CLAP
+USER_AU_DIR ?= $(HOME)/Library/Audio/Plug-Ins/Components
 endif
 ifeq ($(WINDOWS),true)
 USER_LV2_DIR ?= $(APPDATA)/LV2

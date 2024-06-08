@@ -8,6 +8,7 @@
 
 #include "UICollisionDrive.hpp"
 #include "Window.hpp"
+#include "krakel.c"
 
 START_NAMESPACE_DISTRHO
 
@@ -22,8 +23,9 @@ UICollisionDrive::UICollisionDrive()
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
     theme.setIdColour(theme.idColourForgroundNormal, 0.2, 0.92, 0.95, 1.0);
     theme.setIdColour(theme.idColourBackgroundActive, 0.1, 0.92, 0.95, 1.0);
-    theme.setIdColour(theme.idColourBackgroundNormal, 0.12, 0.13, 0.16, 1.0);
+    theme.setIdColour(theme.idColourBackgroundNormal, 0.11, 0.12, 0.14, 1.0);
     theme.setIdColour(theme.idColourBackground, 0.12, 0.13, 0.16, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (krakel_png);
 
     brightKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Bright", PluginCollisionDrive::BRIGHT, true);
@@ -61,7 +63,7 @@ UICollisionDrive::UICollisionDrive()
 }
 
 UICollisionDrive::~UICollisionDrive() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -135,11 +137,24 @@ void UICollisionDrive::onCairoDisplay(const CairoGraphicsContext& context) {
     cairo_t* const cr = context.handle;
     int width = getWidth();
     int height = getHeight();
+    const float scaleH = sizeGroup->getScaleHFactor();
+    const float scaleW = sizeGroup->getScaleWFactor();
 
     cairo_push_group (cr);
 
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
+    cairo_rectangle(cr, 25 * scaleW, 215 * scaleH, width - (50 * scaleW), height - (240 * scaleH));
+    theme.setCairoColour(cr, theme.idColourBackgroundNormal, 0.5f);
+    cairo_fill(cr);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     cairo_pop_group_to_source (cr);

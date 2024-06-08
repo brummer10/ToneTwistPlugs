@@ -17,6 +17,7 @@ BUILD_VST2 ?= true
 BUILD_VST3 ?= true
 BUILD_CLAP ?= true
 BUILD_JACK ?= true
+BUILD_AU ?= true
 BUILD_DSSI ?= false
 BUILD_LADSPA ?= false
 
@@ -59,6 +60,10 @@ endif
 
 ifeq ($(BUILD_CLAP),true)
 TARGETS += clap
+endif
+
+ifeq ($(BUILD_AU),true)
+TARGETS += au
 endif
 
 ifeq ($(BUILD_JACK),true)
@@ -110,6 +115,10 @@ ifeq ($(BUILD_CLAP),true)
 	@mkdir -p -m755 $(DESTDIR)$(CLAP_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).clap $(DESTDIR)$(CLAP_DIR)
 endif
+ifeq ($(BUILD_AU),true)
+	@mkdir -p -m755 $(DESTDIR)$(AU_DIR) && \
+	  install -m755 $(TARGET_DIR)/$(NAME).component $(DESTDIR)$(AU_DIR)
+endif
 ifeq ($(BUILD_LV2),true)
 	@mkdir -p -m755 $(DESTDIR)$(LV2_DIR)/$(NAME).lv2 && \
 	  install -m755 $(TARGET_DIR)/$(NAME).lv2/*$(LIB_EXT) $(DESTDIR)$(LV2_DIR)/$(NAME).lv2 && \
@@ -148,6 +157,10 @@ endif
 ifeq ($(BUILD_CLAP),true)
 	@mkdir -p -m755 $(USER_CLAP_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).clap $(USER_CLAP_DIR)
+endif
+ifeq ($(BUILD_AU),true)
+	@mkdir -p -m755 $(USER_AU_DIR) && \
+	  install -m755 $(TARGET_DIR)/$(NAME).component $(USER_AU_DIR)
 endif
 ifeq ($(BUILD_LV2),true)
 	@mkdir -p -m755 $(USER_LV2_DIR)/$(NAME).lv2 && \

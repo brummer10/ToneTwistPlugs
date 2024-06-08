@@ -8,6 +8,7 @@
 
 #include "UIMetalTone.hpp"
 #include "Window.hpp"
+#include "krakel.c"
 
 START_NAMESPACE_DISTRHO
 
@@ -21,6 +22,7 @@ UIMetalTone::UIMetalTone()
     blocked = false;
     sizeGroup = new UiSizeGroup(kInitialWidth, kInitialHeight);
     theme.setIdColour(theme.idColourForgroundNormal, 0.67, 0.42, 0.26, 1.0);
+    texture = theme.cairo_image_surface_create_from_stream (krakel_png);
 
     driveKnob = new CairoKnob(this, theme, &blocked,
                 dynamic_cast<UI*>(this), "Dist", PluginMetalTone::DIST);
@@ -63,7 +65,7 @@ UIMetalTone::UIMetalTone()
 }
 
 UIMetalTone::~UIMetalTone() {
-
+    cairo_surface_destroy(texture);
 }
 
 // -----------------------------------------------------------------------
@@ -142,6 +144,13 @@ void UIMetalTone::onCairoDisplay(const CairoGraphicsContext& context) {
 
     theme.setCairoColour(cr, theme.idColourBackground);
     cairo_paint(cr);
+
+    cairo_pattern_t *pat = cairo_pattern_create_for_surface(texture);
+    cairo_pattern_set_extend (pat, CAIRO_EXTEND_REPEAT);
+    cairo_set_source(cr, pat);
+    cairo_paint (cr);
+    cairo_pattern_destroy (pat);
+
     theme.boxShadow(cr, width, height, 25, 25);
 
     cairo_pop_group_to_source (cr);
