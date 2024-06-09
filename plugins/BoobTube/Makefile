@@ -114,9 +114,11 @@ ifeq ($(BUILD_CLAP),true)
 	@mkdir -p -m755 $(DESTDIR)$(CLAP_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).clap $(DESTDIR)$(CLAP_DIR)
 endif
+ifeq ($(MACOS),true)
 ifeq ($(BUILD_AU),true)
 	@mkdir -p -m755 $(DESTDIR)$(AU_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).component $(DESTDIR)$(AU_DIR)
+endif
 endif
 ifeq ($(BUILD_LV2),true)
 	@mkdir -p -m755 $(DESTDIR)$(LV2_DIR)/$(NAME).lv2 && \
@@ -157,9 +159,11 @@ ifeq ($(BUILD_CLAP),true)
 	@mkdir -p -m755 $(USER_CLAP_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).clap $(USER_CLAP_DIR)
 endif
+ifeq ($(MACOS),true)
 ifeq ($(BUILD_AU),true)
 	@mkdir -p -m755 $(USER_AU_DIR) && \
 	  install -m755 $(TARGET_DIR)/$(NAME).component $(USER_AU_DIR)
+endif
 endif
 ifeq ($(BUILD_LV2),true)
 	@mkdir -p -m755 $(USER_LV2_DIR)/$(NAME).lv2 && \

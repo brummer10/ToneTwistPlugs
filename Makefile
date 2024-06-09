@@ -29,13 +29,7 @@ BINDIR ?= $(PREFIX)/bin
 LIBDIR ?= $(PREFIX)/lib
 DSSI_DIR ?= $(LIBDIR)/dssi
 LADSPA_DIR ?= $(LIBDIR)/ladspa
-ifneq ($(LINUX),true)
-LV2_DIR ?= $(LIBDIR)/lv2
-VST2_DIR ?= $(LIBDIR)/vst
-VST3_DIR ?= $(LIBDIR)/vst3
-CLAP_DIR ?= $(LIBDIR)/clap
-endif
-ifneq ($(BSD),true)
+ifneq ($(MACOS_OR_WINDOWS),true)
 LV2_DIR ?= $(LIBDIR)/lv2
 VST2_DIR ?= $(LIBDIR)/vst
 VST3_DIR ?= $(LIBDIR)/vst3
@@ -57,13 +51,7 @@ endif
 
 USER_DSSI_DIR ?= $(HOME)/.dssi
 USER_LADSPA_DIR ?= $(HOME)/.ladspa
-ifneq ($(LINUX),true)
-USER_LV2_DIR ?= $(HOME)/.lv2
-USER_VST2_DIR ?= $(HOME)/.vst
-USER_VST3_DIR ?= $(HOME)/.vst3
-USER_CLAP_DIR ?= $(HOME)/.clap
-endif
-ifneq ($(BSD),true)
+ifneq ($(MACOS_OR_WINDOWS),true)
 USER_LV2_DIR ?= $(HOME)/.lv2
 USER_VST2_DIR ?= $(HOME)/.vst
 USER_VST3_DIR ?= $(HOME)/.vst3
