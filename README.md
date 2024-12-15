@@ -118,7 +118,7 @@ section "Prerequisites" below) and then clone this repository (including
 sub-modules) and simply run `make` in the project's root directory:
 
 ```con
-git clone --recursive https://github.com:brummer10/ToneTwistPlugs
+git clone --recursive https://github.com/brummer10/ToneTwistPlugs
 cd ToneTwistPlugs
 make
 ```
